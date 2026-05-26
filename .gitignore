@@ -1,0 +1,12 @@
+node_modules
+dist
+.env
+.env.local
+.DS_Store
+*.log
+*.err.log
+backend/.pglite/
+frontend/dist
+backend/dist
+backend/src/generated/
+scratch-prisma

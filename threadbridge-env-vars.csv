@@ -1,0 +1,12 @@
+app,env_var,value,notes
+backend,PORT,4000,Local API port
+backend,FRONTEND_URL,http://127.0.0.1:5173,Allowed frontend origin
+backend,DATABASE_URL,postgresql://...,Required for Prisma/PostgreSQL
+backend,GEMINI_API_KEY,already set in backend/.env,Do not expose publicly
+backend,GEMINI_MODEL,gemini-2.5-flash,Default Gemini model
+backend,SUPABASE_URL,https://gqfoawrwpgmwvqnwwwuy.supabase.co,Supabase project URL
+backend,SUPABASE_ANON_KEY,sb_publishable_INw9ISvoTgh2sbCZcNXaLQ_K9cLdcHh,Supabase public publishable key
+backend,JWT_SECRET,generate-a-long-random-string,Required secret for production config
+frontend,VITE_API_URL,http://localhost:4000,Frontend API base URL
+frontend,VITE_SUPABASE_URL,https://gqfoawrwpgmwvqnwwwuy.supabase.co,Supabase project URL
+frontend,VITE_SUPABASE_ANON_KEY,sb_publishable_INw9ISvoTgh2sbCZcNXaLQ_K9cLdcHh,Supabase public publishable key

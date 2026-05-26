@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+provider = "postgresql"
+url = env("DATABASE_URL")
+directUrl = env("DIRECT_URL")
+}
+
+
+
+
+enum Plan {
+  FREE @map("free")
+  PRO  @map("pro")
+  TEAM @map("team")
+}
+
+enum InputMethod {
+  SHARE_LINK         @map("share_link")
+  FILE_UPLOAD        @map("file_upload")
+  RAW_TEXT           @map("raw_text")
+  MANUAL_DESCRIPTION @map("manual_description")
+}
+
+model User {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  name      String?
+  avatarUrl String?  @map("avatar_url")
+  plan      Plan     @default(FREE)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  threads Thread[]
+
+  @@map("users")
+}
+
+model Thread {
+  id           String      @id @default(uuid()) @db.Uuid
+  userId       String      @map("user_id") @db.Uuid
+  title        String
+  goal         String      @db.Text
+  context      String      @db.Text
+  keyDecisions Json        @map("key_decisions")
+  lastPoint    String      @map("last_point") @db.Text
+  nextStep     String      @map("next_step") @db.Text
+  tags         Json
+  rawInput     String      @map("raw_input") @db.Text
+  inputMethod  InputMethod @map("input_method")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  user    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prompts GeneratedPrompt[]
+
+  @@index([userId, createdAt])
+  @@map("threads")
+}
+
+model GeneratedPrompt {
+  id         String   @id @default(uuid()) @db.Uuid
+  threadId   String   @map("thread_id") @db.Uuid
+  modelName  String   @map("model_name")
+  promptText String   @map("prompt_text") @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  thread Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@unique([threadId, modelName])
+  @@index([threadId])
+  @@map("generated_prompts")
+}
