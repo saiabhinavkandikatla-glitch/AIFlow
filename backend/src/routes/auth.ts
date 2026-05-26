@@ -32,6 +32,24 @@ const requireSupabase = () => {
   return supabase;
 };
 
+const serializeProfile = (profile: {
+  id: string;
+  email: string;
+  name: string | null;
+  avatarUrl: string | null;
+  plan: string;
+  subscriptionStatus?: string | null;
+  subscriptionCurrentPeriodEnd?: Date | null;
+}) => ({
+  id: profile.id,
+  email: profile.email,
+  name: profile.name,
+  avatar_url: profile.avatarUrl,
+  plan: profile.plan.toLowerCase(),
+  subscription_status: profile.subscriptionStatus ?? null,
+  subscription_current_period_end: profile.subscriptionCurrentPeriodEnd ?? null
+});
+
 router.post(
   "/signup",
   asyncHandler(async (req, res) => {
@@ -108,13 +126,7 @@ router.post(
     });
 
     res.json({
-      user: {
-        id: profile.id,
-        email: profile.email,
-        name: profile.name,
-        avatar_url: profile.avatarUrl,
-        plan: profile.plan.toLowerCase()
-      },
+      user: serializeProfile(profile),
       session: data.session
     });
   })
@@ -137,13 +149,7 @@ router.get(
     });
 
     res.json({
-      user: {
-        id: req.auth!.user.id,
-        email: req.auth!.user.email,
-        name: req.auth!.user.name,
-        avatar_url: req.auth!.user.avatarUrl,
-        plan: req.auth!.user.plan.toLowerCase()
-      },
+      user: serializeProfile(req.auth!.user),
       stats: {
         total_threads: threadCount
       }
@@ -164,15 +170,7 @@ router.patch(
       }
     });
 
-    res.json({
-      user: {
-        id: updated.id,
-        email: updated.email,
-        name: updated.name,
-        avatar_url: updated.avatarUrl,
-        plan: updated.plan.toLowerCase()
-      }
-    });
+    res.json({ user: serializeProfile(updated) });
   })
 );
 

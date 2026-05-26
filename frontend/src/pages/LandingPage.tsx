@@ -27,7 +27,7 @@ export const LandingPage = () => (
           <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <Sparkles className="h-4 w-4" />
           </div>
-          <span className="font-semibold">ThreadBridge</span>
+          <span className="font-semibold">AIFlow</span>
         </Link>
         <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
           <a href="#how" className="hover:text-foreground">
@@ -59,7 +59,7 @@ export const LandingPage = () => (
           <Badge className="border-white/20 bg-white/10 text-white">AI context transfer platform</Badge>
           <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-tight md:text-7xl">Continue any AI conversation, anywhere</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-            ThreadBridge analyzes an existing AI conversation, extracts the useful state, and generates model-specific handoff prompts for ChatGPT, Claude, Gemini, DeepSeek, and Grok.
+            AIFlow analyzes an existing AI conversation, extracts the useful state, and generates model-specific handoff prompts for ChatGPT, Claude, Gemini, DeepSeek, and Grok.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link to="/signup" className={buttonVariants({ size: 'lg' })}>
@@ -124,7 +124,7 @@ export const LandingPage = () => (
       <section id="features" className="py-16">
         <div className="mb-8 max-w-2xl">
           <h2 className="text-3xl font-semibold">Built for messy, real conversations</h2>
-          <p className="mt-3 text-muted-foreground">ThreadBridge turns long chats into portable state, not vague summaries.</p>
+          <p className="mt-3 text-muted-foreground">AIFlow turns long chats into portable state, not vague summaries.</p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => {

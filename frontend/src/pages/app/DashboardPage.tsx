@@ -9,7 +9,7 @@ import { UsageBanner } from '@/components/thread/UsageBanner'
 import { useAuth } from '@/contexts/AuthContext'
 import { threadApi } from '@/lib/api'
 import type { Thread } from '@/lib/types'
-import { currentMonthCount, formatDate } from '@/lib/utils'
+import { currentMonthCount, formatDate, monthlyThreadLimit } from '@/lib/utils'
 
 const StatCard = ({ title, value, icon: Icon }: { title: string; value: string | number; icon: LucideIcon }) => (
   <Card>
@@ -41,6 +41,7 @@ export const DashboardPage = () => {
   }, [token])
 
   const monthlyUsage = currentMonthCount(threads)
+  const monthlyLimit = monthlyThreadLimit(profile?.plan)
   const recent = threads.slice(0, 5)
 
   return (
@@ -56,7 +57,7 @@ export const DashboardPage = () => {
         </Link>
       </div>
 
-      {profile?.plan === 'free' && monthlyUsage >= 5 ? <UsageBanner count={monthlyUsage} /> : null}
+      {monthlyLimit !== null && monthlyUsage >= monthlyLimit ? <UsageBanner count={monthlyUsage} limit={monthlyLimit} /> : null}
 
       <div className="grid gap-4 md:grid-cols-3">
         <StatCard title="Total threads created" value={threads.length} icon={Layers3} />

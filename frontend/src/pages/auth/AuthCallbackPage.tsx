@@ -4,7 +4,7 @@ import { Loader2 } from 'lucide-react'
 import { toast } from '@/lib/toast'
 import { clearSupabaseAuthStorage, requireSupabase } from '@/lib/supabase'
 
-const OAUTH_NEXT_KEY = 'threadbridge.oauth.next'
+const OAUTH_NEXT_KEY = 'aiflow.oauth.next'
 
 const cleanAuthError = (message: string) => {
   const normalized = message.replace(/\+/g, ' ')

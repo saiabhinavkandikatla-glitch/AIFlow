@@ -77,6 +77,12 @@ const monthStart = () => {
   return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
 };
 
+const monthlyThreadLimit = (plan: string) =>
+  ({
+    FREE: 5,
+    STARTER: 20
+  })[plan] ?? null;
+
 const prismaInputMethod = (method: InputMethod) =>
   ({
     share_link: PrismaInputMethod.SHARE_LINK,
@@ -157,10 +163,11 @@ router.post(
       }
     });
 
-    if (req.auth!.user.plan === "FREE" && monthlyCount >= 5) {
-      throw new AppError(402, "Upgrade to Pro to create unlimited threads.", {
+    const limit = monthlyThreadLimit(req.auth!.user.plan);
+    if (limit !== null && monthlyCount >= limit) {
+      throw new AppError(402, `You have reached your ${limit} thread monthly limit. Upgrade to continue.`, {
         plan_limit_reached: true,
-        monthly_limit: 5
+        monthly_limit: limit
       });
     }
 

@@ -1,4 +1,4 @@
-export type Plan = 'free' | 'pro' | 'team'
+export type Plan = 'free' | 'starter' | 'pro' | 'team'
 
 export type Profile = {
   id: string
@@ -6,6 +6,8 @@ export type Profile = {
   name: string | null
   avatar_url: string | null
   plan: Plan
+  subscription_status: string | null
+  subscription_current_period_end: string | null
 }
 
 export type InputMethod = 'share_link' | 'file_upload' | 'raw_text' | 'manual_description'

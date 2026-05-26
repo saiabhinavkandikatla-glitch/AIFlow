@@ -8,9 +8,10 @@ datasource db {
 }
 
 enum Plan {
-  FREE @map("free")
-  PRO  @map("pro")
-  TEAM @map("team")
+  FREE    @map("free")
+  STARTER @map("starter")
+  PRO     @map("pro")
+  TEAM    @map("team")
 }
 
 enum InputMethod {
@@ -26,6 +27,10 @@ model User {
   name      String?
   avatarUrl String?  @map("avatar_url")
   plan      Plan     @default(FREE)
+  stripeCustomerId              String?   @unique @map("stripe_customer_id")
+  stripeSubscriptionId          String?   @unique @map("stripe_subscription_id")
+  subscriptionStatus            String?   @map("subscription_status")
+  subscriptionCurrentPeriodEnd  DateTime? @map("subscription_current_period_end")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

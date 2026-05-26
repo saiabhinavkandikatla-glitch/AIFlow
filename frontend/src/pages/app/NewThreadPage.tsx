@@ -178,7 +178,7 @@ export const NewThreadPage = () => {
 
             <div className="mt-6 flex flex-col gap-3 rounded-lg border bg-muted/40 p-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <div className="font-medium">Create a thread bridge</div>
+                <div className="font-medium">Create an AI flow</div>
                 <p className="mt-1 text-sm text-muted-foreground">Continue this conversation on another AI platform without losing context.</p>
               </div>
               <Button type="submit" size="lg" disabled={loading}>

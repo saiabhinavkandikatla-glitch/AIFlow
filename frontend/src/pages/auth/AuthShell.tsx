@@ -19,7 +19,7 @@ export const AuthShell = ({
         <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
           <Sparkles className="h-4 w-4" />
         </div>
-        ThreadBridge
+        AIFlow
       </Link>
       <div className="max-w-xl">
         <h1 className="text-5xl font-semibold leading-tight">Move the useful context, not the noise</h1>
@@ -44,7 +44,7 @@ export const AuthShell = ({
         <div className="mb-6 text-center lg:hidden">
           <Link to="/" className="inline-flex items-center gap-2 font-semibold">
             <Sparkles className="h-5 w-5 text-primary" />
-            ThreadBridge
+            AIFlow
           </Link>
         </div>
         <Card className="p-6">

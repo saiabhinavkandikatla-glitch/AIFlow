@@ -187,7 +187,7 @@ export const fetchShareLinkConversation = async (shareUrl: string) => {
 
   const response = await fetch(url, {
     headers: {
-      "user-agent": "ThreadBridge/1.0 (+https://threadbridge.app)",
+      "user-agent": "AIFlow/1.0 (+https://aiflow.app)",
       accept: "text/html,application/xhtml+xml"
     }
   });

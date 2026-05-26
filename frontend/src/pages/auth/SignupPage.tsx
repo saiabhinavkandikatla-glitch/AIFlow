@@ -92,7 +92,7 @@ export const SignupPage = () => {
           <div>
             <h3 className="text-xl font-semibold">Verify your email</h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              We created your ThreadBridge account. Open the verification link sent to <span className="font-medium text-foreground">{verifyEmail}</span>, then sign in.
+              We created your AIFlow account. Open the verification link sent to <span className="font-medium text-foreground">{verifyEmail}</span>, then sign in.
             </p>
           </div>
           {signupError ? (
@@ -106,7 +106,7 @@ export const SignupPage = () => {
               <CheckCircle2 className="h-4 w-4 text-accent" />
               Account created successfully
             </div>
-            <p className="mt-1">After email verification, ThreadBridge will open your dashboard with your own saved threads.</p>
+            <p className="mt-1">After email verification, AIFlow will open your dashboard with your own saved threads.</p>
           </div>
           <div className="grid gap-2">
             <Button onClick={() => navigate('/login')}>Go to login</Button>
@@ -172,7 +172,7 @@ export const SignupPage = () => {
         Continue with Google
       </Button>
       <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">
-        Google verifies your email with Google, then returns you to the ThreadBridge dashboard.
+        Google verifies your email with Google, then returns you to the AIFlow dashboard.
       </p>
       <p className="mt-5 text-center text-sm text-muted-foreground">
         Already have an account?{' '}

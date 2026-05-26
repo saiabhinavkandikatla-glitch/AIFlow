@@ -1,6 +1,6 @@
-# ThreadBridge
+# AIFlow
 
-ThreadBridge is a full-stack SaaS app for transferring AI conversation context between models. It imports a prior conversation, analyzes it with Gemini, saves a structured Thread Object, and generates optimized continuation prompts for ChatGPT, Claude, Gemini, DeepSeek, and Grok.
+AIFlow is a full-stack SaaS app for transferring AI conversation context between models. It imports a prior conversation, analyzes it with Gemini, saves a structured Thread Object, and generates optimized continuation prompts for ChatGPT, Claude, Gemini, DeepSeek, and Grok.
 
 ## Stack
 
@@ -76,7 +76,7 @@ Google Cloud Console OAuth client:
 - Authorized JavaScript origins: `http://127.0.0.1:5173`
 - Authorized redirect URIs: `https://<project-ref>.supabase.co/auth/v1/callback`
 
-Do not put `http://127.0.0.1:5173/auth/callback` in Google Cloud as the authorized redirect URI. That localhost callback belongs in Supabase redirect URLs. Google redirects to Supabase first, then Supabase redirects back to ThreadBridge.
+Do not put `http://127.0.0.1:5173/auth/callback` in Google Cloud as the authorized redirect URI. That localhost callback belongs in Supabase redirect URLs. Google redirects to Supabase first, then Supabase redirects back to AIFlow.
 
 If Google returns `Unable to exchange external code`, re-copy the Google Web Client ID and Client Secret into Supabase Authentication > Providers > Google. The Client ID and Client Secret must come from the same Google OAuth Web Client.
 
@@ -91,7 +91,7 @@ createClient(url, key, {
     detectSessionInUrl: false,
     persistSession: true,
     autoRefreshToken: true,
-    storageKey: 'threadbridge.auth'
+    storageKey: 'aiflow.auth'
   }
 })
 ```
@@ -126,7 +126,8 @@ sign_in_sign_ups = 60
 - Thread creation from share link, `.txt`/`.json` upload, raw paste, or manual description
 - Gemini-powered topic, goal, decisions, last point, next step, tag, and prompt generation
 - Thread library with search, date filter, detail view, rename, delete, and prompt regeneration
-- Pricing UI for Free, Pro, and Team tiers
+- Pricing UI for Free, Starter, Pro, and Team tiers
+- Stripe billing routes for checkout, customer portal, and subscription webhooks
 - Global glass-style toast system with success, info, warning, and persistent recovery-focused error states
 
 ## Toast API
@@ -162,9 +163,14 @@ SUPABASE_URL=
 SUPABASE_ANON_KEY=
 JWT_SECRET=
 FRONTEND_URL=https://your-vercel-domain.vercel.app
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_STARTER_PRICE_ID=
+STRIPE_PRO_PRICE_ID=
+STRIPE_TEAM_PRICE_ID=
 ```
 
-Railway uses `backend/railway.json` to run migrations and start the API.
+Railway uses `backend/railway.json` to start the built API. The current Supabase schema has already been pushed with Prisma.
 
 ### Frontend on Vercel
 
@@ -174,9 +180,15 @@ Use `frontend` as the Vercel root directory. Set:
 VITE_API_URL=https://your-railway-backend.up.railway.app
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
+VITE_AUTH_REDIRECT_URL=https://your-vercel-domain.vercel.app/auth/callback
 ```
 
 `frontend/vercel.json` rewrites all routes to the Vite SPA entry.
+
+After deployment, add these Supabase Auth redirect URLs:
+
+- `https://your-vercel-domain.vercel.app/auth/callback`
+- `https://your-vercel-domain.vercel.app/reset-password`
 
 ## API Routes
 

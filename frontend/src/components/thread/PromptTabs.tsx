@@ -28,7 +28,7 @@ export const PromptTabs = ({
 
   const copyThread = async (prompt: GeneratedPrompt) => {
     const text = [
-      `ThreadBridge handoff for ${prompt.model_name}`,
+      `AIFlow handoff for ${prompt.model_name}`,
       '',
       `Title: ${thread.title}`,
       `Goal: ${thread.goal}`,

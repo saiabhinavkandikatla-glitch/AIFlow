@@ -11,11 +11,11 @@ const ThemeContext = createContext<{
 })
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('threadbridge-theme') as Theme | null) ?? 'dark')
+  const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('aiflow-theme') as Theme | null) ?? 'dark')
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
-    localStorage.setItem('threadbridge-theme', theme)
+    localStorage.setItem('aiflow-theme', theme)
   }, [theme])
 
   const value = useMemo(

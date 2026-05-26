@@ -13,7 +13,7 @@ export const supabase = isSupabaseConfigured
         detectSessionInUrl: false,
         flowType: 'pkce',
         persistSession: true,
-        storageKey: 'threadbridge.auth',
+        storageKey: 'aiflow.auth',
       },
     })
   : null
@@ -27,8 +27,8 @@ export const clearSupabaseAuthStorage = async () => {
     Object.keys(storage)
       .filter(
         (key) =>
-          key === 'threadbridge.auth' ||
-          key === 'threadbridge.oauth.next' ||
+          key === 'aiflow.auth' ||
+          key === 'aiflow.oauth.next' ||
           key.startsWith('sb-') ||
           key.toLowerCase().includes('supabase'),
       )

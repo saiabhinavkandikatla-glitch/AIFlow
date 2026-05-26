@@ -1,5 +1,5 @@
 {
-  "name": "threadbridge",
+  "name": "aiflow",
   "version": "1.0.0",
   "private": true,
   "description": "AI context transfer SaaS for moving conversations between AI models.",

@@ -38,7 +38,7 @@ export const AppLayout = () => {
           <Sparkles className="h-4 w-4" />
         </div>
         <div>
-          <div className="text-sm font-semibold">ThreadBridge</div>
+          <div className="text-sm font-semibold">AIFlow</div>
           <div className="text-xs text-muted-foreground capitalize">{profile?.plan ?? 'free'} workspace</div>
         </div>
       </div>

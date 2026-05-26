@@ -119,3 +119,22 @@ export const threadApi = {
       body: JSON.stringify({}),
     }),
 }
+
+export const billingApi = {
+  checkout: (token: string, plan: 'starter' | 'pro' | 'team') =>
+    apiRequest<{ url: string; mode: 'checkout' | 'portal' }>('/api/billing/checkout', {
+      token,
+      method: 'POST',
+      body: JSON.stringify({ plan }),
+    }),
+  portal: (token: string) =>
+    apiRequest<{ url: string }>('/api/billing/portal', {
+      token,
+      method: 'POST',
+      body: JSON.stringify({}),
+    }),
+  syncCheckoutSession: (token: string, sessionId: string) =>
+    apiRequest<{ user: Profile }>(`/api/billing/sync-checkout-session/${sessionId}`, {
+      token,
+    }),
+}

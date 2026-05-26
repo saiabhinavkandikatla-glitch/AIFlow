@@ -7,7 +7,7 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 const adapter = new PrismaPg({
-  connectionString: env.DATABASE_URL ?? "postgresql://postgres:postgres@localhost:5432/threadbridge"
+  connectionString: env.DATABASE_URL ?? "postgresql://postgres:postgres@localhost:5432/aiflow"
 });
 
 export const prisma =

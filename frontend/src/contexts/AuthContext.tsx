@@ -12,7 +12,7 @@ import { authApi } from '@/lib/api'
 import { clearSupabaseAuthStorage, getAuthRedirectUrl, requireSupabase, supabase } from '@/lib/supabase'
 import type { Profile } from '@/lib/types'
 
-const OAUTH_NEXT_KEY = 'threadbridge.oauth.next'
+const OAUTH_NEXT_KEY = 'aiflow.oauth.next'
 
 type AuthContextValue = {
   session: Session | null

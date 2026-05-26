@@ -9,7 +9,11 @@ export type AuthenticatedProfile = {
   email: string;
   name: string | null;
   avatarUrl: string | null;
-  plan: "FREE" | "PRO" | "TEAM";
+  plan: "FREE" | "STARTER" | "PRO" | "TEAM";
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  subscriptionStatus: string | null;
+  subscriptionCurrentPeriodEnd: Date | null;
 };
 
 declare global {
@@ -42,8 +46,8 @@ export const requireAuth = async (req: Request, _res: Response, next: NextFuncti
           where: { id: "00000000-0000-0000-0000-000000000001" },
           create: {
             id: "00000000-0000-0000-0000-000000000001",
-            email: "dev@threadbridge.local",
-            name: "ThreadBridge Dev",
+            email: "dev@aiflow.local",
+            name: "AIFlow Dev",
             plan: "FREE"
           },
           update: {}
@@ -55,7 +59,11 @@ export const requireAuth = async (req: Request, _res: Response, next: NextFuncti
             email: user.email,
             name: user.name,
             avatarUrl: user.avatarUrl,
-            plan: user.plan
+            plan: user.plan,
+            stripeCustomerId: user.stripeCustomerId,
+            stripeSubscriptionId: user.stripeSubscriptionId,
+            subscriptionStatus: user.subscriptionStatus,
+            subscriptionCurrentPeriodEnd: user.subscriptionCurrentPeriodEnd
           }
         };
         return next();
@@ -97,7 +105,11 @@ export const requireAuth = async (req: Request, _res: Response, next: NextFuncti
         email: profile.email,
         name: profile.name,
         avatarUrl: profile.avatarUrl,
-        plan: profile.plan
+        plan: profile.plan,
+        stripeCustomerId: profile.stripeCustomerId,
+        stripeSubscriptionId: profile.stripeSubscriptionId,
+        subscriptionStatus: profile.subscriptionStatus,
+        subscriptionCurrentPeriodEnd: profile.subscriptionCurrentPeriodEnd
       }
     };
     next();

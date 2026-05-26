@@ -44,7 +44,7 @@ export const OnboardingPage = () => {
       await updateProfile({ name: cleanName })
       toast.success({
         title: 'Profile completed',
-        message: `Welcome to ThreadBridge, ${cleanName}.`,
+        message: `Welcome to AIFlow, ${cleanName}.`,
       })
       navigate('/app', { replace: true })
     } catch (error) {
@@ -74,7 +74,7 @@ export const OnboardingPage = () => {
             <Sparkles className="h-5 w-5" />
           </div>
           <CardTitle className="text-2xl">What should we call you?</CardTitle>
-          <CardDescription>Finish your ThreadBridge profile before opening the dashboard.</CardDescription>
+          <CardDescription>Finish your AIFlow profile before opening the dashboard.</CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={submit}>

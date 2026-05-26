@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { AlertTriangle, KeyRound, Loader2, Save, ShieldCheck, Trash2 } from 'lucide-react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { AlertTriangle, CreditCard, KeyRound, Loader2, Save, ShieldCheck, Trash2 } from 'lucide-react'
 import { toast } from '@/lib/toast'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/AuthContext'
-import { threadApi } from '@/lib/api'
+import { billingApi, threadApi } from '@/lib/api'
 import type { Thread } from '@/lib/types'
-import { currentMonthCount } from '@/lib/utils'
+import { currentMonthCount, monthlyThreadLimit } from '@/lib/utils'
 
 export const SettingsPage = () => {
-  const { profile, token, updateProfile, changePassword: verifyAndChangePassword, deleteAccount } = useAuth()
+  const { profile, token, updateProfile, changePassword: verifyAndChangePassword, deleteAccount, refreshProfile } = useAuth()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [name, setName] = useState(profile?.name ?? '')
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url ?? '')
   const [currentPassword, setCurrentPassword] = useState('')
@@ -22,6 +23,7 @@ export const SettingsPage = () => {
   const [threads, setThreads] = useState<Thread[]>([])
   const [saving, setSaving] = useState(false)
   const [changingPassword, setChangingPassword] = useState(false)
+  const [billingLoading, setBillingLoading] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
@@ -36,6 +38,29 @@ export const SettingsPage = () => {
       .then((response) => setThreads(response.threads))
       .catch(() => undefined)
   }, [token])
+
+  useEffect(() => {
+    const billingState = searchParams.get('billing')
+    const sessionId = searchParams.get('session_id')
+    if (!token || billingState !== 'success' || !sessionId) return
+
+    billingApi
+      .syncCheckoutSession(token, sessionId)
+      .then(async () => {
+        await refreshProfile()
+        toast.success({
+          title: 'Plan updated',
+          message: 'Your subscription is active and your workspace limits are refreshed.',
+        })
+      })
+      .catch(() => {
+        toast.info({
+          title: 'Payment received',
+          message: 'Stripe is still syncing your subscription. Refresh billing in a moment if the plan has not changed.',
+        })
+      })
+      .finally(() => setSearchParams({}, { replace: true }))
+  }, [refreshProfile, searchParams, setSearchParams, token])
 
   const saveProfile = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -76,7 +101,7 @@ export const SettingsPage = () => {
   }
 
   const removeAccount = async () => {
-    if (!window.confirm('Delete your ThreadBridge profile and all saved threads?')) return
+    if (!window.confirm('Delete your AIFlow profile and all saved threads?')) return
     setDeleting(true)
     try {
       await deleteAccount()
@@ -89,7 +114,33 @@ export const SettingsPage = () => {
     }
   }
 
+  const openBillingPortal = async () => {
+    if (!token) return
+    setBillingLoading(true)
+    try {
+      const response = await billingApi.portal(token)
+      window.location.assign(response.url)
+    } catch (error) {
+      toast.error({
+        title: 'Billing portal unavailable',
+        message: error instanceof Error ? error.message : 'Could not open billing.',
+        recovery: 'Check your Stripe configuration on the backend, then restart the API.',
+      })
+    } finally {
+      setBillingLoading(false)
+    }
+  }
+
   const monthlyUsage = currentMonthCount(threads)
+  const plan = profile?.plan ?? 'free'
+  const monthlyLimit = monthlyThreadLimit(plan)
+  const periodEnd = profile?.subscription_current_period_end
+    ? new Date(profile.subscription_current_period_end).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : null
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
@@ -198,7 +249,7 @@ export const SettingsPage = () => {
               <AlertTriangle className="h-5 w-5 text-destructive" />
               Delete account
             </CardTitle>
-            <CardDescription>This removes your ThreadBridge profile, saved threads, and generated prompts.</CardDescription>
+            <CardDescription>This removes your AIFlow profile, saved threads, and generated prompts.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="destructive" onClick={removeAccount} disabled={deleting}>
@@ -216,7 +267,32 @@ export const SettingsPage = () => {
             <CardDescription>Your workspace tier.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold capitalize">{profile?.plan ?? 'free'}</div>
+            <div className="text-3xl font-semibold capitalize">{plan}</div>
+            {profile?.subscription_status ? (
+              <p className="mt-2 text-sm text-muted-foreground">
+                Stripe status: <span className="capitalize">{profile.subscription_status.replaceAll('_', ' ')}</span>
+                {periodEnd ? ` · Renews ${periodEnd}` : ''}
+              </p>
+            ) : (
+              <p className="mt-2 text-sm text-muted-foreground">No active subscription connected.</p>
+            )}
+            <div className="mt-5 flex flex-col gap-2">
+              {plan === 'free' ? (
+                <Button onClick={() => navigate('/pricing')}>
+                  <CreditCard className="h-4 w-4" />
+                  Upgrade plan
+                </Button>
+              ) : (
+                <Button onClick={openBillingPortal} disabled={billingLoading}>
+                  {billingLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+                  Manage billing
+                </Button>
+              )}
+              <Button variant="outline" onClick={openBillingPortal} disabled={billingLoading}>
+                {billingLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                Payment methods and invoices
+              </Button>
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -226,10 +302,14 @@ export const SettingsPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-semibold">{monthlyUsage}</div>
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-              <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min((monthlyUsage / 5) * 100, 100)}%` }} />
-            </div>
-            <p className="mt-3 text-sm text-muted-foreground">{profile?.plan === 'free' ? `${monthlyUsage}/5 free threads used` : 'Unlimited thread generation enabled'}</p>
+            {monthlyLimit ? (
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min((monthlyUsage / monthlyLimit) * 100, 100)}%` }} />
+              </div>
+            ) : null}
+            <p className="mt-3 text-sm text-muted-foreground">
+              {monthlyLimit ? `${monthlyUsage}/${monthlyLimit} threads used` : 'Unlimited thread generation enabled'}
+            </p>
           </CardContent>
         </Card>
       </aside>
