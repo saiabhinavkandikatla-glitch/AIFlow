@@ -127,7 +127,7 @@ sign_in_sign_ups = 60
 - Gemini-powered topic, goal, decisions, last point, next step, tag, and prompt generation
 - Thread library with search, date filter, detail view, rename, delete, and prompt regeneration
 - Pricing UI for Free, Starter, Pro, and Team tiers
-- Stripe billing routes for checkout, customer portal, and subscription webhooks
+- Razorpay billing routes for Indian checkout, recurring subscriptions, cancellation, and subscription webhooks
 - Global glass-style toast system with success, info, warning, and persistent recovery-focused error states
 
 ## Toast API
@@ -163,11 +163,12 @@ SUPABASE_URL=
 SUPABASE_ANON_KEY=
 JWT_SECRET=
 FRONTEND_URL=https://your-vercel-domain.vercel.app
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-STRIPE_STARTER_PRICE_ID=
-STRIPE_PRO_PRICE_ID=
-STRIPE_TEAM_PRICE_ID=
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=
+RAZORPAY_WEBHOOK_SECRET=
+RAZORPAY_STARTER_PLAN_ID=
+RAZORPAY_PRO_PLAN_ID=
+RAZORPAY_TEAM_PLAN_ID=
 ```
 
 Railway uses `backend/railway.json` to start the built API. The current Supabase schema has already been pushed with Prisma.

@@ -144,19 +144,41 @@ export const threadApi = {
 
 export const billingApi = {
   checkout: (token: string, plan: 'starter' | 'pro' | 'team') =>
-    apiRequest<{ url: string; mode: 'checkout' | 'portal' }>('/api/billing/checkout', {
+    apiRequest<{
+      provider: 'razorpay'
+      mode: 'checkout'
+      key_id: string
+      subscription_id: string
+      plan: 'starter' | 'pro' | 'team'
+      app_name: string
+      description: string
+      prefill: {
+        name?: string
+        email: string
+      }
+    }>('/api/billing/checkout', {
       token,
       method: 'POST',
       body: JSON.stringify({ plan }),
     }),
-  portal: (token: string) =>
-    apiRequest<{ url: string }>('/api/billing/portal', {
+  verify: (
+    token: string,
+    body: {
+      plan: 'starter' | 'pro' | 'team'
+      razorpay_payment_id: string
+      razorpay_subscription_id: string
+      razorpay_signature: string
+    },
+  ) =>
+    apiRequest<{ user: Profile }>('/api/billing/verify', {
+      token,
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  cancel: (token: string) =>
+    apiRequest<{ user: Profile; message: string }>('/api/billing/cancel', {
       token,
       method: 'POST',
       body: JSON.stringify({}),
-    }),
-  syncCheckoutSession: (token: string, sessionId: string) =>
-    apiRequest<{ user: Profile }>(`/api/billing/sync-checkout-session/${sessionId}`, {
-      token,
     }),
 }

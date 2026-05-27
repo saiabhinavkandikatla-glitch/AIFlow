@@ -10,6 +10,12 @@ backend,SUPABASE_ANON_KEY,sb_publishable_-Qy9tXWyjLWppWqKFDwHMw_eEbmdwCI,Supabas
 backend,SUPABASE_PUBLISHABLE_KEY,sb_publishable_-Qy9tXWyjLWppWqKFDwHMw_eEbmdwCI,Supabase publishable key alias
 backend,JWT_SECRET,generate-a-long-random-string,Required secret for production config
 backend,PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK,1,Prevents pooled Supabase migrations from hanging on advisory locks
+backend,RAZORPAY_KEY_ID,rzp_test_or_live_key_id,Razorpay API key id
+backend,RAZORPAY_KEY_SECRET,razorpay_key_secret,Razorpay API key secret
+backend,RAZORPAY_WEBHOOK_SECRET,razorpay_webhook_secret,Razorpay webhook signing secret
+backend,RAZORPAY_STARTER_PLAN_ID,plan_xxxxxxxxxxxxxx,Razorpay subscription plan for Starter
+backend,RAZORPAY_PRO_PLAN_ID,plan_xxxxxxxxxxxxxx,Razorpay subscription plan for Pro
+backend,RAZORPAY_TEAM_PLAN_ID,plan_xxxxxxxxxxxxxx,Razorpay subscription plan for Team
 frontend,VITE_API_URL,http://localhost:4000,Frontend API base URL
 frontend,VITE_SUPABASE_URL,https://wrpnzeexxqdvlecalvoq.supabase.co,Supabase project URL
 frontend,VITE_SUPABASE_ANON_KEY,sb_publishable_-Qy9tXWyjLWppWqKFDwHMw_eEbmdwCI,Supabase public publishable key

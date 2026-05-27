@@ -48,14 +48,15 @@ export const env = {
   DIRECT_URL: directUrl,
   DATABASE_URL_SOURCE: databaseUrlSource,
   DIRECT_URL_SOURCE: directUrlSource,
-  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
-  STRIPE_STARTER_PRICE_ID: process.env.STRIPE_STARTER_PRICE_ID,
-  STRIPE_PRO_PRICE_ID: process.env.STRIPE_PRO_PRICE_ID,
-  STRIPE_TEAM_PRICE_ID: process.env.STRIPE_TEAM_PRICE_ID
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
+  RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET,
+  RAZORPAY_STARTER_PLAN_ID: process.env.RAZORPAY_STARTER_PLAN_ID,
+  RAZORPAY_PRO_PLAN_ID: process.env.RAZORPAY_PRO_PLAN_ID,
+  RAZORPAY_TEAM_PLAN_ID: process.env.RAZORPAY_TEAM_PLAN_ID
 };
 
 export const isProduction = env.NODE_ENV === "production";
 export const isSupabaseConfigured = Boolean(env.SUPABASE_URL && env.SUPABASE_ANON_KEY);
 export const isGeminiConfigured = Boolean(env.GEMINI_API_KEY);
-export const isStripeConfigured = Boolean(env.STRIPE_SECRET_KEY);
+export const isRazorpayConfigured = Boolean(env.RAZORPAY_KEY_ID && env.RAZORPAY_KEY_SECRET);

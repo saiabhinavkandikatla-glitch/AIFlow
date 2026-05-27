@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { AlertTriangle, CreditCard, KeyRound, Loader2, Save, ShieldCheck, Trash2 } from 'lucide-react'
 import { toast } from '@/lib/toast'
 import { Button } from '@/components/ui/button'
@@ -14,7 +14,6 @@ import { currentMonthCount, monthlyThreadLimit } from '@/lib/utils'
 export const SettingsPage = () => {
   const { profile, token, updateProfile, changePassword: verifyAndChangePassword, deleteAccount, refreshProfile } = useAuth()
   const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
   const [name, setName] = useState(profile?.name ?? '')
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url ?? '')
   const [currentPassword, setCurrentPassword] = useState('')
@@ -38,29 +37,6 @@ export const SettingsPage = () => {
       .then((response) => setThreads(response.threads))
       .catch(() => undefined)
   }, [token])
-
-  useEffect(() => {
-    const billingState = searchParams.get('billing')
-    const sessionId = searchParams.get('session_id')
-    if (!token || billingState !== 'success' || !sessionId) return
-
-    billingApi
-      .syncCheckoutSession(token, sessionId)
-      .then(async () => {
-        await refreshProfile()
-        toast.success({
-          title: 'Plan updated',
-          message: 'Your subscription is active and your workspace limits are refreshed.',
-        })
-      })
-      .catch(() => {
-        toast.info({
-          title: 'Payment received',
-          message: 'Stripe is still syncing your subscription. Refresh billing in a moment if the plan has not changed.',
-        })
-      })
-      .finally(() => setSearchParams({}, { replace: true }))
-  }, [refreshProfile, searchParams, setSearchParams, token])
 
   const saveProfile = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -114,17 +90,23 @@ export const SettingsPage = () => {
     }
   }
 
-  const openBillingPortal = async () => {
+  const cancelBilling = async () => {
     if (!token) return
+    if (!window.confirm('Cancel your Razorpay subscription at the end of the current billing cycle?')) return
+
     setBillingLoading(true)
     try {
-      const response = await billingApi.portal(token)
-      window.location.assign(response.url)
+      const response = await billingApi.cancel(token)
+      await refreshProfile()
+      toast.success({
+        title: 'Subscription cancellation scheduled',
+        message: response.message,
+      })
     } catch (error) {
       toast.error({
-        title: 'Billing portal unavailable',
-        message: error instanceof Error ? error.message : 'Could not open billing.',
-        recovery: 'Check your Stripe configuration on the backend, then restart the API.',
+        title: 'Could not cancel Razorpay subscription',
+        message: error instanceof Error ? error.message : 'Could not update billing.',
+        recovery: 'Check Razorpay configuration and webhook status, then retry.',
       })
     } finally {
       setBillingLoading(false)
@@ -270,7 +252,7 @@ export const SettingsPage = () => {
             <div className="text-3xl font-semibold capitalize">{plan}</div>
             {profile?.subscription_status ? (
               <p className="mt-2 text-sm text-muted-foreground">
-                Stripe status: <span className="capitalize">{profile.subscription_status.replaceAll('_', ' ')}</span>
+                Razorpay status: <span className="capitalize">{profile.subscription_status.replaceAll('_', ' ')}</span>
                 {periodEnd ? ` · Renews ${periodEnd}` : ''}
               </p>
             ) : (
@@ -283,15 +265,12 @@ export const SettingsPage = () => {
                   Upgrade plan
                 </Button>
               ) : (
-                <Button onClick={openBillingPortal} disabled={billingLoading}>
+                <Button variant="destructive" onClick={cancelBilling} disabled={billingLoading}>
                   {billingLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                  Manage billing
+                  Cancel at cycle end
                 </Button>
               )}
-              <Button variant="outline" onClick={openBillingPortal} disabled={billingLoading}>
-                {billingLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                Payment methods and invoices
-              </Button>
+              <p className="text-sm text-muted-foreground">Razorpay sends subscription invoices and payment mandate updates to your email.</p>
             </div>
           </CardContent>
         </Card>

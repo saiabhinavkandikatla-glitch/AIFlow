@@ -9,6 +9,38 @@ import { billingApi } from '@/lib/api'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 
+type RazorpayCheckoutResponse = {
+  razorpay_payment_id: string
+  razorpay_subscription_id: string
+  razorpay_signature: string
+}
+
+type RazorpayCheckoutOptions = {
+  key: string
+  name: string
+  description: string
+  subscription_id: string
+  prefill: {
+    name?: string
+    email: string
+  }
+  theme: {
+    color: string
+  }
+  handler: (response: RazorpayCheckoutResponse) => void
+  modal: {
+    ondismiss: () => void
+  }
+}
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayCheckoutOptions) => {
+      open: () => void
+    }
+  }
+}
+
 const plans = [
   {
     name: 'Free',
@@ -44,8 +76,23 @@ const plans = [
   },
 ] as const
 
+const loadRazorpayCheckout = () =>
+  new Promise<void>((resolve, reject) => {
+    if (window.Razorpay) {
+      resolve()
+      return
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.async = true
+    script.onload = () => resolve()
+    script.onerror = () => reject(new Error('Could not load Razorpay Checkout. Check the connection and retry.'))
+    document.body.appendChild(script)
+  })
+
 export const PricingPage = () => {
-  const { token, profile } = useAuth()
+  const { token, profile, refreshProfile } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
@@ -76,13 +123,48 @@ export const PricingPage = () => {
 
     setLoadingPlan(tier)
     try {
-      const response = await billingApi.checkout(token, tier)
-      window.location.assign(response.url)
+      const checkout = await billingApi.checkout(token, tier)
+      await loadRazorpayCheckout()
+
+      const payment = await new Promise<RazorpayCheckoutResponse>((resolve, reject) => {
+        const Razorpay = window.Razorpay
+        if (!Razorpay) {
+          reject(new Error('Razorpay Checkout did not initialize.'))
+          return
+        }
+
+        const razorpay = new Razorpay({
+          key: checkout.key_id,
+          name: checkout.app_name,
+          description: checkout.description,
+          subscription_id: checkout.subscription_id,
+          prefill: checkout.prefill,
+          theme: {
+            color: '#6aa6ff',
+          },
+          handler: resolve,
+          modal: {
+            ondismiss: () => reject(new Error('Razorpay checkout was closed before payment finished.')),
+          },
+        })
+        razorpay.open()
+      })
+
+      await billingApi.verify(token, {
+        plan: tier,
+        ...payment,
+      })
+      await refreshProfile()
+      toast.success({
+        title: 'Plan upgraded',
+        message: 'Razorpay verified your payment and refreshed your AIFlow limits.',
+      })
+      navigate('/app/settings')
     } catch (error) {
       toast.error({
-        title: 'Billing is not ready',
+        title: 'Razorpay checkout failed',
         message: error instanceof Error ? error.message : 'Could not start checkout.',
-        recovery: 'Add Stripe keys and price IDs on the backend, restart the API, then try again.',
+        recovery: 'Check Razorpay keys and plan IDs on the backend, then retry the checkout.',
       })
     } finally {
       setLoadingPlan(null)
@@ -115,7 +197,7 @@ export const PricingPage = () => {
         <div className="max-w-2xl">
           <h1 className="text-4xl font-semibold md:text-5xl">Plans for every handoff rhythm</h1>
           <p className="mt-4 text-lg leading-8 text-muted-foreground">
-            Upgrade with Stripe Checkout, then manage billing, payment methods, invoices, and cancellation from the customer portal.
+            Upgrade with Razorpay Checkout for Indian payments, recurring subscriptions, invoices, and cancellation from AIFlow settings.
           </p>
         </div>
         <div className="mt-10 grid gap-4 md:grid-cols-4">

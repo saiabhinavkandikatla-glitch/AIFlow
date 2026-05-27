@@ -10,8 +10,8 @@ export type AuthenticatedProfile = {
   name: string | null;
   avatarUrl: string | null;
   plan: "FREE" | "STARTER" | "PRO" | "TEAM";
-  stripeCustomerId: string | null;
-  stripeSubscriptionId: string | null;
+  paymentCustomerId: string | null;
+  paymentSubscriptionId: string | null;
   subscriptionStatus: string | null;
   subscriptionCurrentPeriodEnd: Date | null;
 };
@@ -62,8 +62,8 @@ export const requireAuth = async (req: Request, _res: Response, next: NextFuncti
             name: user.name,
             avatarUrl: user.avatarUrl,
             plan: user.plan,
-            stripeCustomerId: user.stripeCustomerId,
-            stripeSubscriptionId: user.stripeSubscriptionId,
+            paymentCustomerId: user.paymentCustomerId,
+            paymentSubscriptionId: user.paymentSubscriptionId,
             subscriptionStatus: user.subscriptionStatus,
             subscriptionCurrentPeriodEnd: user.subscriptionCurrentPeriodEnd
           }
@@ -110,8 +110,8 @@ export const requireAuth = async (req: Request, _res: Response, next: NextFuncti
         name: profile.name,
         avatarUrl: profile.avatarUrl,
         plan: profile.plan,
-        stripeCustomerId: profile.stripeCustomerId,
-        stripeSubscriptionId: profile.stripeSubscriptionId,
+        paymentCustomerId: profile.paymentCustomerId,
+        paymentSubscriptionId: profile.paymentSubscriptionId,
         subscriptionStatus: profile.subscriptionStatus,
         subscriptionCurrentPeriodEnd: profile.subscriptionCurrentPeriodEnd
       }
