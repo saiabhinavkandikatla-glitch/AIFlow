@@ -47,7 +47,9 @@ const healthPayload = () => ({
       supabaseUrl: Boolean(env.SUPABASE_URL),
       supabaseAnonKey: Boolean(env.SUPABASE_ANON_KEY),
       databaseUrl: Boolean(env.DATABASE_URL),
+      databaseUrlSource: env.DATABASE_URL_SOURCE,
       databaseProjectRef: readSupabaseProjectRef(env.DATABASE_URL),
+      directUrlSource: env.DIRECT_URL_SOURCE,
       supabaseProjectRef: readSupabaseProjectRef(env.SUPABASE_URL),
       geminiApiKey: Boolean(env.GEMINI_API_KEY),
       frontendUrl: env.FRONTEND_URL

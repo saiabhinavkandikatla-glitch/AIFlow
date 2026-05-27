@@ -1,8 +1,8 @@
 app,env_var,value,notes
 backend,PORT,4000,Local API port
 backend,FRONTEND_URL,https://ai-flow-two.vercel.app,Allowed frontend origin
-backend,DATABASE_URL,postgresql://postgres.wrpnzeexxqdvlecalvoq:YOUR-PASSWORD@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true&sslmode=require,Required for Prisma/PostgreSQL
-backend,DIRECT_URL,postgresql://postgres.wrpnzeexxqdvlecalvoq:YOUR-PASSWORD@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require,Used by Prisma migrations
+backend,AIFLOW_DATABASE_URL,postgresql://postgres.wrpnzeexxqdvlecalvoq:YOUR-PASSWORD@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true&sslmode=require,Preferred app DB URL; overrides Railway DATABASE_URL
+backend,AIFLOW_DIRECT_URL,postgresql://postgres.wrpnzeexxqdvlecalvoq:YOUR-PASSWORD@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres?sslmode=require,Preferred migration DB URL; overrides Railway DIRECT_URL
 backend,GEMINI_API_KEY,already set in backend/.env,Do not expose publicly
 backend,GEMINI_MODEL,gemini-2.5-flash,Default Gemini model
 backend,SUPABASE_URL,https://wrpnzeexxqdvlecalvoq.supabase.co,Supabase project URL

@@ -16,6 +16,25 @@ const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
+const databaseUrl = process.env.AIFLOW_DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL ?? process.env.DATABASE_URL;
+const directUrl = process.env.AIFLOW_DIRECT_URL ?? process.env.SUPABASE_DIRECT_URL ?? process.env.DIRECT_URL;
+
+const databaseUrlSource = process.env.AIFLOW_DATABASE_URL
+  ? "AIFLOW_DATABASE_URL"
+  : process.env.SUPABASE_DATABASE_URL
+    ? "SUPABASE_DATABASE_URL"
+    : process.env.DATABASE_URL
+      ? "DATABASE_URL"
+      : null;
+
+const directUrlSource = process.env.AIFLOW_DIRECT_URL
+  ? "AIFLOW_DIRECT_URL"
+  : process.env.SUPABASE_DIRECT_URL
+    ? "SUPABASE_DIRECT_URL"
+    : process.env.DIRECT_URL
+      ? "DIRECT_URL"
+      : null;
+
 export const env = {
   NODE_ENV: process.env.NODE_ENV ?? "development",
   PORT: parsePort(process.env.PORT),
@@ -25,7 +44,10 @@ export const env = {
   SUPABASE_URL: supabaseUrl,
   SUPABASE_ANON_KEY: supabaseAnonKey,
   JWT_SECRET: process.env.JWT_SECRET,
-  DATABASE_URL: process.env.DATABASE_URL,
+  DATABASE_URL: databaseUrl,
+  DIRECT_URL: directUrl,
+  DATABASE_URL_SOURCE: databaseUrlSource,
+  DIRECT_URL_SOURCE: directUrlSource,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   STRIPE_STARTER_PRICE_ID: process.env.STRIPE_STARTER_PRICE_ID,
