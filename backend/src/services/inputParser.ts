@@ -173,6 +173,16 @@ const collectReactFlightText = (html: string) => {
   return compactWhitespace(chunks.join("\n\n"));
 };
 
+const looksLikeSharePlaceholder = (text: string) => {
+  const lower = text.toLowerCase();
+  return (
+    lower.includes("by messaging chatgpt") ||
+    lower.includes("agree to our terms") ||
+    lower.includes("privacy policy") ||
+    lower === "voice"
+  );
+};
+
 export const fetchShareLinkConversation = async (shareUrl: string) => {
   let url: URL;
   try {
@@ -210,8 +220,11 @@ export const fetchShareLinkConversation = async (shareUrl: string) => {
   const visible = collectVisibleText(html);
   const combined = compactWhitespace([embedded, reactFlight, visible].filter(Boolean).join("\n\n"));
 
-  if (combined.length < 80) {
-    throw new AppError(422, "The page loaded, but no readable conversation was found.");
+  if (combined.length < 160 || looksLikeSharePlaceholder(combined)) {
+    throw new AppError(
+      422,
+      "The share link loaded, but AIFlow could not read the conversation. Paste the conversation as raw text or upload a .txt/.json export instead."
+    );
   }
 
   return truncate(combined);
