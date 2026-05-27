@@ -34,6 +34,8 @@ const readBearerToken = (req: Request) => {
 };
 
 export const requireAuth = async (req: Request, _res: Response, next: NextFunction) => {
+  let stage = "reading the bearer token";
+
   try {
     const token = readBearerToken(req);
     if (!token) {
@@ -72,11 +74,13 @@ export const requireAuth = async (req: Request, _res: Response, next: NextFuncti
       throw new AppError(503, "Supabase is not configured on the server.");
     }
 
+    stage = "validating the Supabase session";
     const { data, error } = await supabase.auth.getUser(token);
     if (error || !data.user?.email) {
       throw new AppError(401, "Invalid or expired session.");
     }
 
+    stage = "syncing your AIFlow profile";
     const metadata = data.user.user_metadata ?? {};
     const existingProfile = await prisma.user.findUnique({
       where: { id: data.user.id }
@@ -114,6 +118,17 @@ export const requireAuth = async (req: Request, _res: Response, next: NextFuncti
     };
     next();
   } catch (error) {
-    next(error);
+    if (error instanceof AppError) {
+      next(error);
+      return;
+    }
+
+    console.error(`Authentication failed while ${stage}`, error);
+    next(
+      new AppError(500, `Authentication failed while ${stage}.`, {
+        stage,
+        cause: error instanceof Error ? error.message : String(error)
+      })
+    );
   }
 };
