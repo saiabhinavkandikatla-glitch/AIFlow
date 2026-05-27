@@ -19,24 +19,55 @@ const ALLOWED_SHARE_HOSTS = new Set([
   "www.claude.ai"
 ]);
 
-const labelMessage = (role: string | undefined, content: unknown) => {
-  const cleanRole = role && /assistant|user|system|human/i.test(role) ? role : "message";
-  const text =
-    typeof content === "string"
-      ? content
-      : Array.isArray(content)
-        ? content.join("\n")
-        : content == null
-          ? ""
-          : JSON.stringify(content);
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
+const normalizeRole = (role: unknown) => {
+  if (isRecord(role)) return normalizeRole(role.role);
+  if (typeof role !== "string") return "message";
+  if (/assistant/i.test(role)) return "assistant";
+  if (/user|human/i.test(role)) return "user";
+  if (/system/i.test(role)) return "system";
+  return "message";
+};
+
+const contentToText = (content: unknown): string => {
+  if (typeof content === "string") return content;
+  if (Array.isArray(content)) return content.map(contentToText).filter(Boolean).join("\n");
+  if (!isRecord(content)) return "";
+
+  if (Array.isArray(content.parts)) {
+    return content.parts.map(contentToText).filter(Boolean).join("\n");
+  }
+
+  for (const key of ["text", "content", "message", "body"]) {
+    if (typeof content[key] === "string" || Array.isArray(content[key]) || isRecord(content[key])) {
+      const text = contentToText(content[key]);
+      if (text) return text;
+    }
+  }
+
+  return "";
+};
+
+const labelMessage = (role: unknown, content: unknown) => {
+  const cleanRole = normalizeRole(role);
+  const text = contentToText(content);
+  if (!text.trim()) return "";
   return `${cleanRole}: ${text}`;
 };
 
 const maybeMessageFromObject = (value: Record<string, unknown>) => {
-  const role = (value.role ?? value.speaker ?? value.author ?? value.from) as string | undefined;
-  const content = value.content ?? value.text ?? value.message ?? value.body;
+  if (isRecord(value.message) && (value.message.author || value.message.content)) {
+    return maybeMessageFromObject(value.message);
+  }
+
+  const role = value.role ?? value.speaker ?? value.author ?? value.from;
+  const content =
+    value.content ?? value.text ?? (typeof value.message === "string" ? value.message : undefined) ?? value.body;
   if (!content) return null;
-  return labelMessage(role, content);
+  const message = labelMessage(role, content);
+  return message || null;
 };
 
 const extractChatGptMapping = (value: Record<string, unknown>) => {
@@ -51,37 +82,47 @@ const extractChatGptMapping = (value: Record<string, unknown>) => {
       const messageRecord = message as Record<string, unknown>;
       const author = messageRecord.author as Record<string, unknown> | undefined;
       const content = messageRecord.content as Record<string, unknown> | undefined;
-      const parts = Array.isArray(content?.parts) ? content?.parts : [];
-      const text = parts.filter((part) => typeof part === "string").join("\n");
-      return text ? labelMessage(author?.role as string | undefined, text) : null;
+      const role = normalizeRole(author?.role);
+      if (role !== "assistant" && role !== "user") return null;
+      const text = contentToText(content);
+      return text ? labelMessage(role, text) : null;
     })
     .filter((item): item is string => Boolean(item));
 };
 
-const extractMessagesFromJson = (value: unknown): string[] => {
+const extractMessagesFromJson = (value: unknown, seen = new WeakSet<object>()): string[] => {
   if (Array.isArray(value)) {
     const direct = value
       .map((item) => (item && typeof item === "object" ? maybeMessageFromObject(item as Record<string, unknown>) : null))
       .filter((item): item is string => Boolean(item));
     if (direct.length > 0) return direct;
-    return value.flatMap(extractMessagesFromJson);
+    return value.flatMap((item) => extractMessagesFromJson(item, seen));
   }
 
   if (!value || typeof value !== "object") return [];
+  if (seen.has(value)) return [];
+  seen.add(value);
 
   const record = value as Record<string, unknown>;
   const chatGptMessages = extractChatGptMapping(record);
   if (chatGptMessages.length > 0) return chatGptMessages;
 
-  for (const key of ["messages", "conversation", "chat", "items", "turns"]) {
+  for (const key of ["messages", "conversation", "chat", "items", "turns", "linear_conversation"]) {
     if (Array.isArray(record[key])) {
-      const messages = extractMessagesFromJson(record[key]);
+      const messages = extractMessagesFromJson(record[key], seen);
       if (messages.length > 0) return messages;
     }
   }
 
   const direct = maybeMessageFromObject(record);
-  return direct ? [direct] : [];
+  if (direct) return [direct];
+
+  for (const nested of Object.values(record)) {
+    const messages = extractMessagesFromJson(nested, seen);
+    if (messages.length > 0) return messages;
+  }
+
+  return [];
 };
 
 export const parseUploadedFile = (file: Express.Multer.File) => {
@@ -150,17 +191,98 @@ const collectEmbeddedJsonText = (html: string) => {
   return compactWhitespace(chunks.join("\n\n"));
 };
 
-const decodeEscapedJsonString = (value: string) => {
+const decodeJavaScriptStringLiteral = (value: string) => {
   try {
-    const parsed = JSON.parse(`"${value.replace(/"/g, '\\"')}"`) as string;
-    return parsed.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+    return JSON.parse(`"${value}"`) as string;
   } catch {
-    return value.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+    return null;
   }
+};
+
+const decodeEscapedJsonString = (value: string) => {
+  const parsed = decodeJavaScriptStringLiteral(value);
+  if (parsed !== null) {
+    return parsed.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+  }
+
+  return value.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+};
+
+const decodeReactRouterStream = (value: string) => {
+  const parsed = decodeJavaScriptStringLiteral(value);
+  if (parsed !== null) {
+    return parsed;
+  }
+
+    return value.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+};
+
+const resolveReactRouterValue = (
+  payload: unknown[],
+  value: unknown,
+  seen = new Set<number>(),
+  depth = 0
+): unknown => {
+  if (depth > 90) return undefined;
+
+  if (typeof value === "number" && Number.isInteger(value) && value >= 0 && value < payload.length) {
+    if (seen.has(value)) return undefined;
+    const nextSeen = new Set(seen);
+    nextSeen.add(value);
+    return resolveReactRouterValue(payload, payload[value], nextSeen, depth + 1);
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => resolveReactRouterValue(payload, item, seen, depth + 1))
+      .filter((item) => item !== undefined);
+  }
+
+  if (isRecord(value)) {
+    const record: Record<string, unknown> = {};
+    for (const [rawKey, rawValue] of Object.entries(value)) {
+      const keyRef = /^_(\d+)$/.exec(rawKey);
+      const resolvedKey = keyRef
+        ? resolveReactRouterValue(payload, Number(keyRef[1]), seen, depth + 1)
+        : rawKey;
+      const key = typeof resolvedKey === "string" ? resolvedKey : rawKey;
+      const resolvedValue = resolveReactRouterValue(payload, rawValue, seen, depth + 1);
+      if (resolvedValue !== undefined) record[key] = resolvedValue;
+    }
+    return record;
+  }
+
+  if (typeof value === "number" && value < 0) return undefined;
+  return value;
+};
+
+const collectReactRouterStreamText = (html: string) => {
+  const chunks: string[] = [];
+  const streamPattern = /streamController\.enqueue\("((?:\\.|[^"\\])*)"\)/g;
+
+  for (const match of html.matchAll(streamPattern)) {
+    const decoded = decodeReactRouterStream(match[1] ?? "");
+    if (!decoded.trim().startsWith("[")) continue;
+
+    try {
+      const payload = JSON.parse(decoded) as unknown;
+      if (!Array.isArray(payload) || payload.length === 0) continue;
+      const resolved = resolveReactRouterValue(payload, payload[0]);
+      const messages = extractMessagesFromJson(resolved);
+      if (messages.length > 0) chunks.push(messages.join("\n\n"));
+    } catch {
+      // Ignore stream chunks that are not complete JSON payloads.
+    }
+  }
+
+  return compactWhitespace(chunks.join("\n\n"));
 };
 
 const collectReactFlightText = (html: string) => {
   const chunks: string[] = [];
+  const routerStream = collectReactRouterStreamText(html);
+  if (routerStream) chunks.push(routerStream);
+
   const partsPattern = /\\"parts\\",\[(?:\d+)\],\\"((?:\\\\.|(?!\\").)*)\\"/g;
 
   for (const match of html.matchAll(partsPattern)) {
@@ -218,9 +340,10 @@ export const fetchShareLinkConversation = async (shareUrl: string) => {
   const embedded = collectEmbeddedJsonText(html);
   const reactFlight = collectReactFlightText(html);
   const visible = collectVisibleText(html);
-  const combined = compactWhitespace([embedded, reactFlight, visible].filter(Boolean).join("\n\n"));
+  const structuredConversation = compactWhitespace([embedded, reactFlight].filter(Boolean).join("\n\n"));
+  const combined = structuredConversation || visible;
 
-  if (combined.length < 160 || looksLikeSharePlaceholder(combined)) {
+  if (combined.length < 160 || (!structuredConversation && looksLikeSharePlaceholder(combined))) {
     throw new AppError(
       422,
       "The share link loaded, but AIFlow could not read the conversation. Paste the conversation as raw text or upload a .txt/.json export instead."
