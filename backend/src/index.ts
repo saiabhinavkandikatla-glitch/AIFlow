@@ -29,6 +29,7 @@ app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
 const healthPayload = () => ({
     ok: true,
     service: "aiflow-api",
+    diagnostics: "thread-create-stage-errors",
     config: {
       supabaseUrl: Boolean(env.SUPABASE_URL),
       supabaseAnonKey: Boolean(env.SUPABASE_ANON_KEY),

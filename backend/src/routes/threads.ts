@@ -143,65 +143,83 @@ router.post(
   "/create",
   upload.single("file"),
   asyncHandler(async (req, res) => {
-    const inputMethod = inputMethodSchema.parse(req.body.input_method ?? req.body.inputMethod);
-    const content =
-      inputMethod === "manual_description" && !req.body.content
-        ? {
-            working_on: req.body.working_on,
-            decisions_made: req.body.decisions_made,
-            last_message: req.body.last_message,
-            continue_goal: req.body.continue_goal
+    let stage = "validating the input";
+
+    try {
+      const inputMethod = inputMethodSchema.parse(req.body.input_method ?? req.body.inputMethod);
+      const content =
+        inputMethod === "manual_description" && !req.body.content
+          ? {
+              working_on: req.body.working_on,
+              decisions_made: req.body.decisions_made,
+              last_message: req.body.last_message,
+              continue_goal: req.body.continue_goal
+            }
+          : parseMaybeJson(req.body.content);
+
+      stage = "checking your monthly usage";
+      const monthlyCount = await prisma.thread.count({
+        where: {
+          userId: req.auth!.user.id,
+          createdAt: {
+            gte: monthStart()
           }
-        : parseMaybeJson(req.body.content);
-
-    const monthlyCount = await prisma.thread.count({
-      where: {
-        userId: req.auth!.user.id,
-        createdAt: {
-          gte: monthStart()
         }
-      }
-    });
+      });
 
-    const limit = monthlyThreadLimit(req.auth!.user.plan);
-    if (limit !== null && monthlyCount >= limit) {
-      throw new AppError(402, `You have reached your ${limit} thread monthly limit. Upgrade to continue.`, {
-        plan_limit_reached: true,
-        monthly_limit: limit
+      const limit = monthlyThreadLimit(req.auth!.user.plan);
+      if (limit !== null && monthlyCount >= limit) {
+        throw new AppError(402, `You have reached your ${limit} thread monthly limit. Upgrade to continue.`, {
+          plan_limit_reached: true,
+          monthly_limit: limit
+        });
+      }
+
+      stage = "reading the conversation input";
+      const normalizedConversation = await normalizeInput({
+        inputMethod,
+        content,
+        file: req.file ?? undefined
+      });
+
+      stage = "analyzing the conversation";
+      const analysis = await analyzeConversation(normalizedConversation);
+
+      stage = "saving the generated thread";
+      const thread = await prisma.thread.create({
+        data: {
+          userId: req.auth!.user.id,
+          title: analysis.title,
+          goal: analysis.goal,
+          context: analysis.context,
+          keyDecisions: analysis.key_decisions,
+          lastPoint: analysis.last_point,
+          nextStep: analysis.next_step,
+          tags: analysis.tags,
+          rawInput: normalizedConversation,
+          inputMethod: prismaInputMethod(inputMethod),
+          prompts: {
+            create: modelNames.map((model) => ({
+              modelName: model,
+              promptText: analysis.prompts[model]
+            }))
+          }
+        },
+        include: { prompts: { orderBy: { createdAt: "asc" } } }
+      });
+
+      res.status(201).json({ thread: serializeThread(thread) });
+    } catch (error) {
+      if (error instanceof AppError || error instanceof z.ZodError) {
+        throw error;
+      }
+
+      console.error(`Thread creation failed while ${stage}`, error);
+      throw new AppError(500, `Thread creation failed while ${stage}.`, {
+        stage,
+        cause: error instanceof Error ? error.message : String(error)
       });
     }
-
-    const normalizedConversation = await normalizeInput({
-      inputMethod,
-      content,
-      file: req.file ?? undefined
-    });
-
-    const analysis = await analyzeConversation(normalizedConversation);
-
-    const thread = await prisma.thread.create({
-      data: {
-        userId: req.auth!.user.id,
-        title: analysis.title,
-        goal: analysis.goal,
-        context: analysis.context,
-        keyDecisions: analysis.key_decisions,
-        lastPoint: analysis.last_point,
-        nextStep: analysis.next_step,
-        tags: analysis.tags,
-        rawInput: normalizedConversation,
-        inputMethod: prismaInputMethod(inputMethod),
-        prompts: {
-          create: modelNames.map((model) => ({
-            modelName: model,
-            promptText: analysis.prompts[model]
-          }))
-        }
-      },
-      include: { prompts: { orderBy: { createdAt: "asc" } } }
-    });
-
-    res.status(201).json({ thread: serializeThread(thread) });
   })
 );
 
