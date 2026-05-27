@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Globe2, Loader2 } from 'lucide-react'
 import { toast } from '@/lib/toast'
@@ -25,10 +25,10 @@ export const LoginPage = () => {
     if (session) navigate(redirectTo, { replace: true })
   }, [navigate, redirectTo, session])
 
-  const restartGoogleConnection = async () => {
+  const restartGoogleConnection = useCallback(async () => {
     await clearSupabaseAuthStorage()
     await loginWithGoogle()
-  }
+  }, [loginWithGoogle])
 
   useEffect(() => {
     if (!authError || routeState?.toastShown || shownAuthError.current === authError) return
@@ -43,7 +43,7 @@ export const LoginPage = () => {
       },
       persistent: true,
     })
-  }, [authError, routeState?.toastShown])
+  }, [authError, restartGoogleConnection, routeState?.toastShown])
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
