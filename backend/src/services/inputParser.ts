@@ -185,12 +185,20 @@ export const fetchShareLinkConversation = async (shareUrl: string) => {
     throw new AppError(400, "Only public ChatGPT and Claude share links are supported.");
   }
 
-  const response = await fetch(url, {
-    headers: {
-      "user-agent": "AIFlow/1.0 (+https://aiflow.app)",
-      accept: "text/html,application/xhtml+xml"
-    }
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      headers: {
+        "user-agent": "AIFlow/1.0 (+https://aiflow.app)",
+        accept: "text/html,application/xhtml+xml"
+      }
+    });
+  } catch {
+    throw new AppError(
+      502,
+      "AIFlow could not reach that share link. Try pasting the conversation as raw text, or upload a .txt/.json export."
+    );
+  }
 
   if (!response.ok) {
     throw new AppError(response.status, "The share link could not be fetched. Make sure it is public.");

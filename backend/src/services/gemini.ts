@@ -267,20 +267,25 @@ Conversation:
 ${conversationText}
 `;
 
-  const response = await gemini.models.generateContent({
-    model: env.GEMINI_MODEL,
-    contents: userPrompt,
-    config: {
-      systemInstruction: SYSTEM_PROMPT,
-      temperature: 0.2,
-      maxOutputTokens: 5000,
-      responseMimeType: "application/json"
-    }
-  });
+  try {
+    const response = await gemini.models.generateContent({
+      model: env.GEMINI_MODEL,
+      contents: userPrompt,
+      config: {
+        systemInstruction: SYSTEM_PROMPT,
+        temperature: 0.2,
+        maxOutputTokens: 5000,
+        responseMimeType: "application/json"
+      }
+    });
 
-  const text = response.text ?? "";
+    const text = response.text ?? "";
 
-  return normalizeAnalysis(extractJsonObject(text), fallback);
+    return normalizeAnalysis(extractJsonObject(text), fallback);
+  } catch (error) {
+    console.warn("Gemini analysis failed; using fallback analysis.", error);
+    return fallback;
+  }
 };
 
 export const regeneratePrompts = async (analysis: Omit<ThreadAnalysis, "prompts">) => {
@@ -307,21 +312,32 @@ Next step: ${analysis.next_step}
 Tags: ${analysis.tags.join(", ")}
 `;
 
-  const response = await gemini.models.generateContent({
-    model: env.GEMINI_MODEL,
-    contents: prompt,
-    config: {
-      systemInstruction: SYSTEM_PROMPT,
-      temperature: 0.2,
-      maxOutputTokens: 3500,
-      responseMimeType: "application/json"
-    }
-  });
+  try {
+    const response = await gemini.models.generateContent({
+      model: env.GEMINI_MODEL,
+      contents: prompt,
+      config: {
+        systemInstruction: SYSTEM_PROMPT,
+        temperature: 0.2,
+        maxOutputTokens: 3500,
+        responseMimeType: "application/json"
+      }
+    });
 
-  const text = response.text ?? "";
+    const text = response.text ?? "";
 
-  const parsed = extractJsonObject(text) as { prompts?: unknown };
-  return coercePrompts(parsed.prompts, analysis);
+    const parsed = extractJsonObject(text) as { prompts?: unknown };
+    return coercePrompts(parsed.prompts, analysis);
+  } catch (error) {
+    console.warn("Gemini prompt regeneration failed; using fallback prompts.", error);
+    return MODEL_NAMES.reduce(
+      (acc, model) => {
+        acc[model] = buildPrompt(model, analysis);
+        return acc;
+      },
+      {} as Record<ModelName, string>
+    );
+  }
 };
 
 export const modelNames = MODEL_NAMES;
