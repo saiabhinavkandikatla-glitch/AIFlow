@@ -79,34 +79,34 @@ const ProfileSection = ({
   plan: string
 }) => (
   <Card className="animate-scale-in overflow-hidden">
-    <CardContent className="grid gap-5 p-5 lg:grid-cols-[1fr_auto] lg:items-center">
-      <div className="flex min-w-0 items-center gap-4">
+    <CardContent className="space-y-5 p-5">
+      <div className="flex min-w-0 items-start gap-3">
         {avatarUrl ? (
-          <img src={avatarUrl} alt="" className="h-14 w-14 rounded-full border object-cover" />
+          <img src={avatarUrl} alt="" className="h-12 w-12 shrink-0 rounded-full border object-cover" />
         ) : (
-          <div className="flex h-14 w-14 items-center justify-center rounded-full border bg-primary/10 text-xl font-semibold text-primary">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border bg-primary/10 text-lg font-semibold text-primary">
             {name.slice(0, 1).toUpperCase()}
           </div>
         )}
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="truncate text-lg font-semibold tracking-tight">Profile</h2>
             <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium capitalize text-primary">{plan} plan</span>
           </div>
           <p className="mt-1 truncate text-sm text-muted-foreground">{name}</p>
-          <div className="mt-3 flex flex-wrap gap-3 text-sm text-muted-foreground">
-            <span className="inline-flex items-center gap-2">
+          <div className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <span className="flex min-w-0 items-center gap-2">
               <Mail className="h-4 w-4 text-primary" />
-              {email}
+              <span className="truncate">{email}</span>
             </span>
-            <span className="inline-flex items-center gap-2">
+            <span className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-accent" />
               Private workspace
             </span>
           </div>
         </div>
       </div>
-      <Link to="/app/settings" className={buttonVariants({ variant: 'outline', className: 'w-full lg:w-auto' })}>
+      <Link to="/app/settings" className={buttonVariants({ variant: 'outline', className: 'w-full justify-center rounded-xl' })}>
         <UserRound className="h-4 w-4" />
         Manage Profile
       </Link>
