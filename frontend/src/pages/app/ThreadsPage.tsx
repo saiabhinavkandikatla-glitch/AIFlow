@@ -24,7 +24,7 @@ export const ThreadsPage = () => {
     threadApi
       .list(token)
       .then((response) => setThreads(response.threads))
-      .catch((error) => toast.error(error instanceof Error ? error.message : 'Could not load Threads'))
+      .catch((error) => toast.error(error instanceof Error ? error.message : 'Could not load Flows'))
       .finally(() => setLoading(false))
   }
 
@@ -44,11 +44,11 @@ export const ThreadsPage = () => {
 
   const deleteThread = async (thread: Thread) => {
     if (!token) return
-    if (!window.confirm(`Delete Thread "${thread.title}"?`)) return
+    if (!window.confirm(`Delete Flow "${thread.title}"?`)) return
     try {
       await threadApi.delete(token, thread.id)
       setThreads((current) => current.filter((item) => item.id !== thread.id))
-      toast.success('Thread deleted')
+      toast.success('Flow deleted')
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Delete failed')
     }
@@ -58,12 +58,12 @@ export const ThreadsPage = () => {
     <div className="animate-fade-slide-up space-y-6 pb-20">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">My Threads</h1>
-          <p className="mt-2 max-w-2xl text-muted-foreground">Search and reopen the conversation handoffs you have already created.</p>
+          <h1 className="text-3xl font-semibold tracking-tight">Flows</h1>
+          <p className="mt-2 max-w-2xl text-muted-foreground">Search and reopen the AI handoffs you have already created.</p>
         </div>
         <Link to="/app/threads/new" className={buttonVariants({ className: 'rounded-xl' })}>
           <Plus className="h-4 w-4" />
-          New Thread
+          Capture Context
         </Link>
       </div>
 
@@ -86,18 +86,18 @@ export const ThreadsPage = () => {
       {loading ? (
         <div className="flex items-center justify-center rounded-2xl border bg-card p-10 text-muted-foreground">
           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-          Loading Threads
+          Loading Flows
         </div>
       ) : threads.length === 0 ? (
         <FlowOnboardingEmptyState />
       ) : filteredThreads.length === 0 ? (
         <EmptyState
           icon={<Layers3 className="h-5 w-5" />}
-          title="No matching Threads"
-          description="Create a new Thread or adjust your search and date filters."
+          title="No matching Flows"
+          description="Create a new Flow or adjust your search and date filters."
           action={
             <Link to="/app/threads/new" className={buttonVariants()}>
-              New Thread
+              Capture Context
             </Link>
           }
         />
@@ -129,8 +129,8 @@ export const ThreadsPage = () => {
                 size="icon"
                 className="opacity-100 md:opacity-0 md:group-hover:opacity-100"
                 onClick={() => deleteThread(thread)}
-                aria-label="Delete Thread"
-                title="Delete Thread"
+                aria-label="Delete Flow"
+                title="Delete Flow"
               >
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>

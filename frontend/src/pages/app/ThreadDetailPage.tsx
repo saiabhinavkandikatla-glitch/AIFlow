@@ -30,7 +30,7 @@ export const ThreadDetailPage = () => {
         setThread(response.thread)
         setTitle(response.thread.title)
       })
-      .catch((error) => toast.error(error instanceof Error ? error.message : 'Could not load Thread'))
+      .catch((error) => toast.error(error instanceof Error ? error.message : 'Could not load Flow'))
       .finally(() => setLoading(false))
   }, [id, token])
 
@@ -51,7 +51,7 @@ export const ThreadDetailPage = () => {
       const response = await threadApi.update(token, thread.id, { title: nextTitle })
       setThread(response.thread)
       setTitle(response.thread.title)
-      toast.success('Thread renamed')
+      toast.success('Flow renamed')
     } catch (error) {
       setTitle(thread.title)
       toast.error(error instanceof Error ? error.message : 'Rename failed')
@@ -66,9 +66,9 @@ export const ThreadDetailPage = () => {
     try {
       const response = await threadApi.regenerate(token, thread.id)
       setThread(response.thread)
-      toast.success('Handoff prompts refined')
+      toast.success('Model handoffs refined')
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Regeneration failed')
+      toast.error(error instanceof Error ? error.message : 'Flow refinement failed')
     } finally {
       setRegenerating(false)
     }
@@ -76,10 +76,10 @@ export const ThreadDetailPage = () => {
 
   const deleteThread = async () => {
     if (!token || !thread) return
-    if (!window.confirm(`Delete Thread "${thread.title}"?`)) return
+    if (!window.confirm(`Delete Flow "${thread.title}"?`)) return
     try {
       await threadApi.delete(token, thread.id)
-      toast.success('Thread deleted')
+      toast.success('Flow deleted')
       navigate('/app/threads')
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Delete failed')
@@ -90,7 +90,7 @@ export const ThreadDetailPage = () => {
     return (
       <div className="animate-fade-slide-up flex items-center justify-center rounded-2xl border bg-card p-10 text-muted-foreground">
         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-        Loading Thread
+        Loading Flow
       </div>
     )
   }
@@ -99,9 +99,9 @@ export const ThreadDetailPage = () => {
     return (
       <Card className="animate-scale-in">
         <CardContent className="p-8">
-          <p className="text-muted-foreground">Thread not found.</p>
+          <p className="text-muted-foreground">Flow not found.</p>
           <Link to="/app/threads" className={buttonVariants({ className: 'mt-4' })}>
-            Back to My Threads
+            Back to Flows
           </Link>
         </CardContent>
       </Card>
@@ -139,7 +139,7 @@ export const ThreadDetailPage = () => {
                 <h1 className="truncate text-3xl font-semibold leading-tight tracking-tight md:text-4xl">{thread.title}</h1>
               </button>
             )}
-            <p className="mt-2 text-sm text-muted-foreground">Click the title to rename this Thread.</p>
+            <p className="mt-2 text-sm text-muted-foreground">Click the title to rename this Flow.</p>
           </div>
           <Button variant="destructive" onClick={deleteThread} className="rounded-xl">
             <Trash2 className="h-4 w-4" />

@@ -303,7 +303,7 @@ export const regeneratePrompts = async (analysis: Omit<ThreadAnalysis, "prompts"
 Generate optimized continuation prompts for these AI models: ChatGPT, Claude, Gemini, DeepSeek, Grok.
 Return only JSON in this shape: {"prompts":{"ChatGPT":"...","Claude":"...","Gemini":"...","DeepSeek":"...","Grok":"..."}}
 
-Thread title: ${analysis.title}
+Flow title: ${analysis.title}
 Goal: ${analysis.goal}
 Context: ${analysis.context}
 Key decisions: ${analysis.key_decisions.join("; ")}

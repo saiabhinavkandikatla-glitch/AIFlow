@@ -86,7 +86,7 @@ export const SettingsPage = () => {
   }
 
   const removeAccount = async () => {
-    if (!window.confirm('Delete your AI Flow profile and all saved Threads?')) return
+    if (!window.confirm('Delete your AI Flow profile and all saved Flows?')) return
     setDeleting(true)
     try {
       await deleteAccount()
@@ -184,7 +184,7 @@ export const SettingsPage = () => {
           </div>
           <div>
             <div className="mb-2 flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Threads this month</span>
+              <span className="text-muted-foreground">Flows this month</span>
               <span className="font-medium">{monthlyLimit ? `${monthlyUsage}/${monthlyLimit}` : `${monthlyUsage} / unlimited`}</span>
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-muted">
@@ -293,7 +293,7 @@ export const SettingsPage = () => {
             <AlertTriangle className="h-5 w-5 text-destructive" />
             Delete account
           </CardTitle>
-          <CardDescription>This removes your profile, saved Threads, and generated model handoffs.</CardDescription>
+          <CardDescription>This removes your profile, saved Flows, and generated model handoffs.</CardDescription>
         </CardHeader>
         <CardContent className="pt-5">
           <Button variant="destructive" onClick={removeAccount} disabled={deleting} className="rounded-xl">

@@ -185,7 +185,7 @@ const ensureThreadOwner = async (threadId: string, userId: string) => {
     where: { id: threadId, userId },
     include: { prompts: { orderBy: { createdAt: "asc" } } }
   });
-  if (!thread) throw new AppError(404, "Thread not found.");
+  if (!thread) throw new AppError(404, "Flow not found.");
   return thread;
 };
 
@@ -254,7 +254,7 @@ router.post(
 
       const limit = monthlyThreadLimit(req.auth!.user.plan);
       if (limit !== null && monthlyCount >= limit) {
-        throw new AppError(402, `You have reached your ${limit} thread monthly limit. Upgrade to continue.`, {
+        throw new AppError(402, `You have reached your ${limit} Flow monthly limit. Upgrade to continue.`, {
           plan_limit_reached: true,
           monthly_limit: limit
         });
@@ -277,7 +277,7 @@ router.post(
       stage = "analyzing the conversation";
       const analysis = await analyzeConversation(normalizedConversation);
 
-      stage = "saving the generated thread";
+      stage = "saving the generated Flow";
       const thread = await prisma.thread.create({
         data: {
           userId: req.auth!.user.id,
@@ -306,8 +306,8 @@ router.post(
         throw error;
       }
 
-      console.error(`Thread creation failed while ${stage}`, error);
-      throw new AppError(500, `Thread creation failed while ${stage}.`, {
+      console.error(`Flow creation failed while ${stage}`, error);
+      throw new AppError(500, `Flow creation failed while ${stage}.`, {
         stage,
         cause: error instanceof Error ? error.message : String(error)
       });

@@ -8,15 +8,15 @@ import { cn } from '@/lib/utils'
 
 const navItems = [
   { label: 'Dashboard', href: '/app', icon: Home, end: true },
-  { label: 'New Thread', href: '/app/threads/new', icon: Plus },
-  { label: 'My Threads', href: '/app/threads', icon: Layers3 },
+  { label: 'Capture Context', href: '/app/threads/new', icon: Plus },
+  { label: 'Flows', href: '/app/threads', icon: Layers3 },
   { label: 'Settings', href: '/app/settings', icon: Settings },
 ]
 
 const pageTitleForPath = (pathname: string) => {
   if (pathname === '/app') return 'Dashboard'
-  if (pathname.startsWith('/app/threads/new')) return 'New Thread'
-  if (pathname.startsWith('/app/threads')) return 'My Threads'
+  if (pathname.startsWith('/app/threads/new')) return 'Capture Context'
+  if (pathname.startsWith('/app/threads')) return 'Flows'
   if (pathname.startsWith('/app/settings')) return 'Settings'
   return 'AI Flow'
 }
@@ -64,7 +64,7 @@ export const AppLayout = () => {
           className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm shadow-primary/15 hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
-          New Thread
+          Capture Context
         </Link>
       </div>
 

@@ -125,7 +125,7 @@ export const DashboardPage = () => {
     threadApi
       .list(token)
       .then((response) => setThreads(response.threads))
-      .catch((error) => toast.error(error instanceof Error ? error.message : 'Could not load Threads'))
+      .catch((error) => toast.error(error instanceof Error ? error.message : 'Could not load Flows'))
       .finally(() => setLoading(false))
   }, [token])
 
@@ -150,12 +150,12 @@ export const DashboardPage = () => {
             </h1>
             <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground md:text-lg">
               Paste a ChatGPT, Claude, Gemini, or DeepSeek conversation. AIFlow reads the context, extracts the key decisions,
-              and builds a ready-to-paste prompt for your next AI — so you never lose momentum switching models.
+              and builds a ready-to-paste model handoff so you never lose momentum switching models.
             </p>
           </div>
           <Link to="/app/threads/new" className={buttonVariants({ size: 'lg', className: 'rounded-xl' })}>
             <Plus className="h-4 w-4" />
-            New Thread
+            Capture Context
           </Link>
         </div>
       </section>
@@ -163,7 +163,7 @@ export const DashboardPage = () => {
       {monthlyLimit !== null && monthlyUsage >= monthlyLimit ? <UsageBanner count={monthlyUsage} limit={monthlyLimit} /> : null}
 
       <div className="grid gap-4 md:grid-cols-3">
-        <StatCard title="Total threads" value={threads.length} icon={Layers3} delay="stagger-1" />
+        <StatCard title="Total flows" value={threads.length} icon={Layers3} delay="stagger-1" />
         <StatCard title="Generated this month" value={monthlyUsage} icon={TrendingUp} delay="stagger-2" />
         <StatCard title="Model handoffs available" value="5" icon={Braces} delay="stagger-3" />
       </div>
@@ -173,7 +173,7 @@ export const DashboardPage = () => {
           {loading || recent.length > 0 ? (
             <Card className="animate-scale-in">
               <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <CardTitle className="tracking-tight">Recent Threads</CardTitle>
+                <CardTitle className="tracking-tight">Recent Flows</CardTitle>
                 <Link to="/app/threads" className={buttonVariants({ variant: 'outline', className: 'hidden rounded-xl md:inline-flex' })}>
                   View all
                 </Link>
@@ -182,7 +182,7 @@ export const DashboardPage = () => {
                 {loading ? (
                   <div className="flex items-center justify-center p-10 text-muted-foreground">
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Loading Threads
+                    Loading Flows
                   </div>
                 ) : (
                   <div className="divide-y divide-border/70">

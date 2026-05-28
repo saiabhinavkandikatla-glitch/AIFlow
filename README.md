@@ -1,6 +1,6 @@
 # AIFlow
 
-AIFlow is a full-stack SaaS app for transferring AI conversation context between models. It imports a prior conversation, analyzes it with Gemini, saves a structured Thread Object, and generates optimized continuation prompts for ChatGPT, Claude, Gemini, DeepSeek, and Grok.
+AIFlow is a full-stack SaaS app for transferring AI conversation context between models. It captures a prior conversation, analyzes it with Gemini, saves a structured AI Flow, and generates optimized model handoffs for ChatGPT, Claude, Gemini, DeepSeek, and Grok.
 
 ## Stack
 
@@ -123,9 +123,9 @@ sign_in_sign_ups = 60
 - Forgot password and reset password flows
 - Protected dashboard and app routes
 - Profile settings, password change, plan display, usage display, and account deletion of app data
-- Thread creation from share link, `.txt`/`.json` upload, raw paste, or manual description
+- Flow creation from share link, `.txt`/`.json` upload, raw paste, or manual description
 - Gemini-powered topic, goal, decisions, last point, next step, tag, and prompt generation
-- Thread library with search, date filter, detail view, rename, delete, and prompt regeneration
+- Flow library with search, date filter, detail view, rename, delete, and model handoff refinement
 - Pricing UI for Free, Starter, Pro, and Team tiers
 - Razorpay billing routes for Indian checkout, recurring subscriptions, cancellation, and subscription webhooks
 - Global glass-style toast system with success, info, warning, and persistent recovery-focused error states

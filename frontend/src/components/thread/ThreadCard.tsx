@@ -31,13 +31,13 @@ export const ThreadCard = ({ thread }: { thread: Thread }) => (
       <CardTitle className="text-2xl leading-tight tracking-tight">{thread.title}</CardTitle>
     </CardHeader>
     <CardContent className="grid gap-6 pt-0 lg:grid-cols-2">
-      <Section label="Goal" className="animate-fade-slide-up stagger-1">
+      <Section label="Current Objective" className="animate-fade-slide-up stagger-1">
         {thread.goal}
       </Section>
       <Section label="Current State" className="animate-fade-slide-up stagger-2">
         {thread.last_point}
       </Section>
-      <Section label="Decisions" className="animate-fade-slide-up stagger-3">
+      <Section label="Settled Decisions" className="animate-fade-slide-up stagger-3">
         <ul className="space-y-2">
           {thread.key_decisions.length > 0 ? (
             thread.key_decisions.map((decision) => (
@@ -51,10 +51,10 @@ export const ThreadCard = ({ thread }: { thread: Thread }) => (
           )}
         </ul>
       </Section>
-      <Section label="Next Step" className="animate-fade-slide-up stagger-4">
+      <Section label="Next Milestone" className="animate-fade-slide-up stagger-4">
         {thread.next_step}
       </Section>
-      <Section label="Context" className="animate-fade-slide-up stagger-5 lg:col-span-2">
+      <Section label="Flow Context" className="animate-fade-slide-up stagger-5 lg:col-span-2">
         <p className="text-muted-foreground">{thread.context}</p>
       </Section>
     </CardContent>

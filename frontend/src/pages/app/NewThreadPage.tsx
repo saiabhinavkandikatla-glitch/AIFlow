@@ -73,12 +73,12 @@ export const NewThreadPage = () => {
     setLoading(true)
     try {
       const response = await threadApi.create(token, buildPayload())
-      toast.success('Thread ready')
+      toast.success('Flow ready')
       navigate(`/app/threads/${response.thread.id}`)
     } catch (error) {
       toast.error({
-        title: 'Thread creation failed',
-        message: error instanceof Error ? error.message : 'Something stopped the Thread from being created.',
+        title: 'Flow creation failed',
+        message: error instanceof Error ? error.message : 'Something stopped the Flow from being created.',
         recovery: 'Retry once. If it repeats, paste the conversation as raw text or upload a trimmed export.',
       })
     } finally {
@@ -94,9 +94,9 @@ export const NewThreadPage = () => {
   return (
     <div className="animate-fade-slide-up mx-auto max-w-5xl space-y-6 pb-20">
       <div>
-        <h1 className="text-3xl font-semibold tracking-tight">New Thread</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Capture Context</h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
-          Bring in a conversation and generate a clean continuation prompt for the model you want to use next.
+          Bring in a conversation and turn it into a reusable AI Flow for the model you want to use next.
         </p>
       </div>
 
@@ -153,7 +153,7 @@ export const NewThreadPage = () => {
                     <FileUp className="h-8 w-8 text-muted-foreground" />
                     <div>
                       <p className="font-medium">{file ? file.name : 'Drop your file here'}</p>
-                      <p className="mt-1 text-sm text-muted-foreground">.txt or .json — max 1.5 MB</p>
+                      <p className="mt-1 text-sm text-muted-foreground">.txt or .json, max 1.5 MB</p>
                     </div>
                     <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
                       Browse files
@@ -225,7 +225,7 @@ export const NewThreadPage = () => {
               <p className="text-sm text-muted-foreground">AIFlow will map the context, decisions, last point, and next step.</p>
               <Button type="submit" size="lg" className={cn('rounded-xl', loading && 'animate-pulse')} disabled={loading}>
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <WandSparkles className="h-4 w-4" />}
-                {loading ? 'Building handoff...' : 'Create Thread'}
+                {loading ? 'Building handoff...' : 'Create Flow'}
               </Button>
             </div>
           </form>

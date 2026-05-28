@@ -201,7 +201,7 @@ export const parseUploadedFile = (file: Express.Multer.File) => {
 
 export const parseManualDescription = (content: ManualDescription) =>
   compactWhitespace(`
-Manual Thread Description
+Manual Flow Description
 
 What the user was working on:
 ${content.working_on}

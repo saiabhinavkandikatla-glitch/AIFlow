@@ -83,7 +83,7 @@ export const PromptTabs = ({
             className="rounded-xl"
           >
             <WandSparkles className={regenerating ? 'h-4 w-4 animate-spin' : 'h-4 w-4'} />
-            Refine Prompts
+            Refine Handoffs
           </Button>
         ) : null}
       </CardHeader>
@@ -107,12 +107,12 @@ export const PromptTabs = ({
                 <p className="text-sm leading-6 text-muted-foreground">{modelNotes[prompt.model_name]}</p>
                 <Button
                   onClick={() => copyThread(prompt)}
-                  title={`Copy a ${prompt.model_name} handoff prompt.`}
-                  aria-label={`Copy ${prompt.model_name} prompt`}
+                  title={`Copy a ${prompt.model_name} model handoff.`}
+                  aria-label={`Copy ${prompt.model_name} model handoff`}
                   className="rounded-xl"
                 >
                   {copied === prompt.model_name ? <Check className="h-4 w-4 text-emerald-500" /> : <Clipboard className="h-4 w-4" />}
-                  {copied === prompt.model_name ? 'Copied!' : 'Copy Prompt'}
+                  {copied === prompt.model_name ? 'Copied!' : 'Copy Handoff'}
                 </Button>
               </div>
               <pre className="max-h-[440px] overflow-auto whitespace-pre-wrap rounded-2xl border bg-muted/40 p-4 font-mono text-sm leading-6 text-foreground shadow-inner">
