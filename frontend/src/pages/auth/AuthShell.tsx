@@ -24,11 +24,11 @@ export const AuthShell = ({
       <div className="max-w-xl">
         <h1 className="text-5xl font-semibold leading-tight">Move the useful context, not the noise</h1>
         <p className="mt-5 text-lg leading-8 text-slate-300">
-          Turn an old AI chat into a clean continuation brief with the goal, decisions, and next step ready to carry forward.
+          Turn an active AI conversation into a clean Flow with the objective, decisions, and next milestone ready for any model.
         </p>
       </div>
       <div className="grid gap-3">
-        {['Thread state', 'Decisions', 'Last point', 'Next action', 'Model handoff'].map((model) => (
+        {['Flow context', 'Settled decisions', 'Current state', 'Next milestone', 'Model handoff'].map((model) => (
           <div key={model} className="flex items-center justify-between rounded-md border border-white/10 bg-white/[0.04] px-4 py-3">
             <span className="text-sm">{model}</span>
             <span className="h-2 w-20 rounded bg-accent/70" />

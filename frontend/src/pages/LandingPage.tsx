@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2, FileText, Link as LinkIcon, Lock, MessageSquareText, Sparkles } from 'lucide-react'
+import { ArrowRight, Braces, CheckCircle2, GitBranch, Link as LinkIcon, Lock, ScanText, Sparkles, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { ThemeToggle } from '@/components/layout/ThemeToggle'
 import { Badge } from '@/components/ui/badge'
@@ -7,16 +7,22 @@ import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
 const features = [
-  { icon: LinkIcon, title: 'Share links', text: 'Import public ChatGPT or Claude conversations.' },
-  { icon: FileText, title: 'Exports', text: 'Upload .txt or .json files from prior chats.' },
-  { icon: MessageSquareText, title: 'Raw paste', text: 'Paste messy turns and let AI structure them.' },
-  { icon: Lock, title: 'Protected library', text: 'Every generated thread is tied to your account.' },
+  { icon: LinkIcon, title: 'Context capture', text: 'Pull in public share links, transcripts, exports, or manual project state.' },
+  { icon: GitBranch, title: 'Flow mapping', text: 'Extract the objective, decisions, current state, and next milestone.' },
+  { icon: Braces, title: 'Model handoffs', text: 'Generate bridges tuned for ChatGPT, Claude, Gemini, DeepSeek, and Grok.' },
+  { icon: Lock, title: 'Private workspace', text: 'Every Flow is saved to the signed-in user who created it.' },
 ]
 
 const pricing = [
-  ['Free', '$0', '5 threads/month', 'Basic output'],
-  ['Pro', '$9', 'Unlimited threads', 'All model prompts'],
-  ['Team', '$29', 'Shared workspace', 'Team thread library'],
+  ['Free', '$0', '5 Flows/month', 'Core handoffs'],
+  ['Starter', '$1', '20 Flows/month', 'All model handoffs'],
+  ['Pro', '$9', 'Unlimited Flows', 'Priority processing'],
+]
+
+const howSteps: { title: string; text: string; icon: LucideIcon }[] = [
+  { title: 'Capture Context', text: 'Add a share link, file export, raw transcript, or manual summary.', icon: ScanText },
+  { title: 'Map the Flow', text: 'AIFlow extracts the objective, settled decisions, current state, and next milestone.', icon: GitBranch },
+  { title: 'Model Handoff', text: 'Copy a bridge tailored to the model you want to use next.', icon: Braces },
 ]
 
 export const LandingPage = () => (
@@ -52,18 +58,18 @@ export const LandingPage = () => (
       </div>
     </header>
 
-    <section className="hero-scene relative min-h-[720px] overflow-hidden pt-16 text-white">
+    <section className="hero-scene surface-grid relative min-h-[720px] overflow-hidden pt-16 text-white">
       <div className="absolute inset-x-0 bottom-0 h-40 bg-background" />
       <div className="relative mx-auto flex min-h-[656px] max-w-7xl items-center px-4 py-16 md:px-8">
         <div className="max-w-3xl">
-          <Badge className="border-white/20 bg-white/10 text-white">AI context transfer platform</Badge>
-          <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-tight md:text-7xl">Continue any AI conversation, anywhere</h1>
+          <Badge className="border-white/20 bg-white/10 text-white">AI context mobility platform</Badge>
+          <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-tight md:text-7xl">Move any AI conversation to the right model.</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-            AIFlow analyzes an existing AI conversation, extracts the useful state, and generates model-specific handoff prompts for ChatGPT, Claude, Gemini, DeepSeek, and Grok.
+            AIFlow captures your chat, maps the objective, decisions, and next step, then creates model-ready handoffs for ChatGPT, Claude, Gemini, DeepSeek, and Grok.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link to="/signup" className={buttonVariants({ size: 'lg' })}>
-              Get Started Free
+              Create Your First Flow
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link to="/pricing" className={buttonVariants({ variant: 'outline', size: 'lg', className: 'border-white/20 bg-white/5 text-white hover:bg-white/10' })}>
@@ -80,10 +86,10 @@ export const LandingPage = () => (
                 <span className="h-3 w-3 rounded-full bg-yellow-300" />
                 <span className="h-3 w-3 rounded-full bg-green-400" />
               </div>
-              <span className="text-xs text-slate-400">handoff preview</span>
+              <span className="text-xs text-slate-400">Flow bridge preview</span>
             </div>
             <div className="grid gap-3 pt-4">
-              {['Detect goal', 'Extract decisions', 'Map last point', 'Generate prompts'].map((item, index) => (
+              {['Capture context', 'Map decisions', 'Locate current state', 'Build model handoffs'].map((item, index) => (
                 <div key={item} className="flex items-center gap-3 rounded-md border border-white/10 bg-white/[0.04] p-3">
                   <span className="flex h-7 w-7 items-center justify-center rounded bg-primary/25 text-xs">{index + 1}</span>
                   <span className="text-sm text-slate-200">{item}</span>
@@ -93,7 +99,7 @@ export const LandingPage = () => (
             </div>
           </div>
           <div className="ml-20 mt-5 rounded-lg border border-white/15 bg-slate-950/80 p-4 shadow-2xl">
-            <div className="text-sm font-medium text-slate-200">Continue in Claude</div>
+            <div className="text-sm font-medium text-slate-200">Handoff to Claude</div>
             <div className="mt-3 space-y-2">
               <div className="h-2 w-full rounded bg-white/15" />
               <div className="h-2 w-5/6 rounded bg-white/15" />
@@ -106,25 +112,29 @@ export const LandingPage = () => (
 
     <main className="mx-auto max-w-7xl px-4 py-14 md:px-8">
       <section id="how" className="grid gap-4 md:grid-cols-3">
-        {['Share', 'Analyze', 'Continue'].map((step, index) => (
-          <Card key={step} className="lift">
+        {howSteps.map((step, index) => {
+          const Icon = step.icon
+          return (
+          <Card key={step.title} className="lift">
             <CardContent className="p-6">
-              <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">{index + 1}</div>
-              <h2 className="text-xl font-semibold">{step}</h2>
+              <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
+                <Icon className="h-5 w-5" />
+              </div>
+              <h2 className="text-xl font-semibold">{step.title}</h2>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                {index === 0 && 'Add a link, upload a file, paste raw text, or write a manual handoff.'}
-                {index === 1 && 'Gemini extracts the topic, goal, decisions, current state, and next step.'}
-                {index === 2 && 'Copy the best prompt for the model you want to use next.'}
+                {step.text}
               </p>
+              <div className="mt-5 text-xs font-semibold text-muted-foreground">STEP 0{index + 1}</div>
             </CardContent>
           </Card>
-        ))}
+          )
+        })}
       </section>
 
       <section id="features" className="py-16">
         <div className="mb-8 max-w-2xl">
-          <h2 className="text-3xl font-semibold">Built for messy, real conversations</h2>
-          <p className="mt-3 text-muted-foreground">AIFlow turns long chats into portable state, not vague summaries.</p>
+          <h2 className="text-3xl font-semibold">Built for serious AI workflows</h2>
+          <p className="mt-3 text-muted-foreground">AIFlow turns long chats into portable operating context, not vague summaries.</p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => {
@@ -144,8 +154,8 @@ export const LandingPage = () => (
 
       <section id="pricing" className="pb-16">
         <div className="mb-8 max-w-2xl">
-          <h2 className="text-3xl font-semibold">Simple plans</h2>
-          <p className="mt-3 text-muted-foreground">Start free, upgrade when AI handoffs become part of your daily work.</p>
+          <h2 className="text-3xl font-semibold">Plans that scale with your Flow volume</h2>
+          <p className="mt-3 text-muted-foreground">Start free, upgrade when cross-model handoffs become part of your daily work.</p>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {pricing.map(([name, price, lineOne, lineTwo]) => (

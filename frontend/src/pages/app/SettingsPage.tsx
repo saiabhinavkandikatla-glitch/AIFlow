@@ -77,7 +77,7 @@ export const SettingsPage = () => {
   }
 
   const removeAccount = async () => {
-    if (!window.confirm('Delete your AIFlow profile and all saved threads?')) return
+    if (!window.confirm('Delete your AIFlow profile and all saved Flows?')) return
     setDeleting(true)
     try {
       await deleteAccount()
@@ -231,7 +231,7 @@ export const SettingsPage = () => {
               <AlertTriangle className="h-5 w-5 text-destructive" />
               Delete account
             </CardTitle>
-            <CardDescription>This removes your AIFlow profile, saved threads, and generated prompts.</CardDescription>
+            <CardDescription>This removes your AIFlow profile, saved Flows, and generated model handoffs.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="destructive" onClick={removeAccount} disabled={deleting}>
@@ -253,7 +253,7 @@ export const SettingsPage = () => {
             {profile?.subscription_status ? (
               <p className="mt-2 text-sm text-muted-foreground">
                 Razorpay status: <span className="capitalize">{profile.subscription_status.replaceAll('_', ' ')}</span>
-                {periodEnd ? ` · Renews ${periodEnd}` : ''}
+                {periodEnd ? ` - Renews ${periodEnd}` : ''}
               </p>
             ) : (
               <p className="mt-2 text-sm text-muted-foreground">No active subscription connected.</p>
@@ -276,8 +276,8 @@ export const SettingsPage = () => {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>API usage this month</CardTitle>
-            <CardDescription>Thread analyses generated.</CardDescription>
+            <CardTitle>AI usage this month</CardTitle>
+            <CardDescription>Flow maps generated.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-semibold">{monthlyUsage}</div>
@@ -287,7 +287,7 @@ export const SettingsPage = () => {
               </div>
             ) : null}
             <p className="mt-3 text-sm text-muted-foreground">
-              {monthlyLimit ? `${monthlyUsage}/${monthlyLimit} threads used` : 'Unlimited thread generation enabled'}
+              {monthlyLimit ? `${monthlyUsage}/${monthlyLimit} Flows used` : 'Unlimited Flow generation enabled'}
             </p>
           </CardContent>
         </Card>

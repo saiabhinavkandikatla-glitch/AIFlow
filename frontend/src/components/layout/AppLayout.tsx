@@ -9,8 +9,8 @@ import { cn } from '@/lib/utils'
 
 const navItems = [
   { label: 'Dashboard', href: '/app', icon: Home, end: true },
-  { label: 'My Threads', href: '/app/threads', icon: Layers3 },
-  { label: 'New Thread', href: '/app/threads/new', icon: Plus },
+  { label: 'Flow Studio', href: '/app/threads', icon: Layers3 },
+  { label: 'Capture Context', href: '/app/threads/new', icon: Plus },
   { label: 'Settings', href: '/app/settings', icon: Settings },
 ]
 
@@ -39,7 +39,7 @@ export const AppLayout = () => {
         </div>
         <div>
           <div className="text-sm font-semibold">AIFlow</div>
-          <div className="text-xs text-muted-foreground capitalize">{profile?.plan ?? 'free'} workspace</div>
+          <div className="text-xs text-muted-foreground capitalize">{profile?.plan ?? 'free'} Flow workspace</div>
         </div>
       </div>
       <nav className="flex-1 space-y-1 p-3">
@@ -90,8 +90,8 @@ export const AppLayout = () => {
               <Menu className="h-5 w-5" />
             </Button>
             <div>
-              <div className="text-sm font-medium text-muted-foreground">Private context workspace</div>
-              <div className="text-lg font-semibold">Carry the thread forward</div>
+              <div className="text-sm font-medium text-muted-foreground">Enterprise context workspace</div>
+              <div className="text-lg font-semibold">Move AI work without losing state</div>
             </div>
           </div>
           <div className="flex items-center gap-2">

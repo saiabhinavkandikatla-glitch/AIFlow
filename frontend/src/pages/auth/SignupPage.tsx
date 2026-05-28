@@ -85,7 +85,7 @@ export const SignupPage = () => {
   }
 
   return (
-    <AuthShell title="Create your workspace" subtitle="Start with 5 free AI context transfers this month.">
+    <AuthShell title="Create your Flow workspace" subtitle="Start with 5 free AI context transfers this month.">
       {verifyEmail ? (
         <div className="space-y-5 text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -108,7 +108,7 @@ export const SignupPage = () => {
               <CheckCircle2 className="h-4 w-4 text-accent" />
               Account created successfully
             </div>
-            <p className="mt-1">After email verification, AIFlow will open your dashboard with your own saved threads.</p>
+            <p className="mt-1">After email verification, AIFlow will open your dashboard with your own saved Flows.</p>
           </div>
           <div className="grid gap-2">
             <Button onClick={() => navigate('/login')}>Go to login</Button>

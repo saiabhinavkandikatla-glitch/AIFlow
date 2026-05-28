@@ -74,7 +74,7 @@ export const OnboardingPage = () => {
             <Sparkles className="h-5 w-5" />
           </div>
           <CardTitle className="text-2xl">What should we call you?</CardTitle>
-          <CardDescription>Finish your AIFlow profile before opening the dashboard.</CardDescription>
+          <CardDescription>Finish your AIFlow profile before opening your Flow workspace.</CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={submit}>

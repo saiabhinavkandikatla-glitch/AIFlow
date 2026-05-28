@@ -9,8 +9,8 @@ export const UsageBanner = ({ count, limit }: { count: number; limit: number }) 
         <Zap className="h-4 w-4" />
       </div>
       <div>
-        <div className="font-semibold">Upgrade to keep creating threads</div>
-        <p className="text-sm text-muted-foreground">You have used {count}/{limit} thread generations this month.</p>
+        <div className="font-semibold">Upgrade to keep creating Flows</div>
+        <p className="text-sm text-muted-foreground">You have used {count}/{limit} Flow generations this month.</p>
       </div>
     </div>
     <Link to="/pricing" className={buttonVariants({ className: 'md:w-auto' })}>

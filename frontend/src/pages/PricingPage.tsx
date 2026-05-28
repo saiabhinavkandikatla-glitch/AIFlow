@@ -46,33 +46,33 @@ const plans = [
     name: 'Free',
     tier: 'free',
     price: '$0',
-    description: 'For trying AIFlow with a few conversations.',
+    description: 'For validating AIFlow with a few cross-model transfers.',
     featured: false,
-    features: ['5 threads/month', 'Basic output', 'Thread library'],
+    features: ['5 Flows/month', 'Core handoffs', 'Flow Studio'],
   },
   {
     name: 'Starter',
     tier: 'starter',
     price: '$1',
-    description: 'For students and builders who need more context transfers.',
+    description: 'For students and builders who need more Flow volume.',
     featured: true,
-    features: ['20 threads/month', 'All model prompts', 'Saved thread library'],
+    features: ['20 Flows/month', 'All model handoffs', 'Saved Flow Studio'],
   },
   {
     name: 'Pro',
     tier: 'pro',
     price: '$9',
-    description: 'For regular cross-model conversation handoffs.',
+    description: 'For regular cross-model AI work and deeper handoff volume.',
     featured: false,
-    features: ['Unlimited threads', 'All model prompts', 'Priority processing'],
+    features: ['Unlimited Flows', 'All model handoffs', 'Priority processing'],
   },
   {
     name: 'Team',
     tier: 'team',
     price: '$29',
-    description: 'For shared workspaces and collaborative handoffs.',
+    description: 'For shared workspaces and collaborative model handoffs.',
     featured: false,
-    features: ['Everything in Pro', 'Team workspace', 'Shared threads'],
+    features: ['Everything in Pro', 'Team workspace', 'Shared Flows'],
   },
 ] as const
 
@@ -195,9 +195,9 @@ export const PricingPage = () => {
       </header>
       <main className="mx-auto max-w-7xl px-4 py-14 md:px-8">
         <div className="max-w-2xl">
-          <h1 className="text-4xl font-semibold md:text-5xl">Plans for every handoff rhythm</h1>
+          <h1 className="text-4xl font-semibold md:text-5xl">Plans for every Flow volume</h1>
           <p className="mt-4 text-lg leading-8 text-muted-foreground">
-            Upgrade with Razorpay Checkout for Indian payments, recurring subscriptions, invoices, and cancellation from AIFlow settings.
+            Upgrade with Razorpay Checkout for recurring subscriptions, invoices, and cancellation from AIFlow settings.
           </p>
         </div>
         <div className="mt-10 grid gap-4 md:grid-cols-4">

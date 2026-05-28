@@ -8,7 +8,7 @@ export const ThreadCard = ({ thread }: { thread: Thread }) => (
     <CardHeader className="border-b bg-muted/25">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
-          <div className="text-sm font-medium text-muted-foreground">Thread brief</div>
+          <div className="text-sm font-medium text-muted-foreground">Flow Summary</div>
           <CardTitle className="mt-2 text-2xl leading-tight md:text-3xl">{thread.title}</CardTitle>
         </div>
         <div className="flex max-w-xl flex-wrap gap-2">
@@ -22,21 +22,21 @@ export const ThreadCard = ({ thread }: { thread: Thread }) => (
       <section className="rounded-lg border bg-background/80 p-4">
         <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
           <Goal className="h-4 w-4 text-primary" />
-          Goal detected
+          Current Objective
         </div>
         <p className="text-sm leading-6 text-muted-foreground">{thread.goal}</p>
       </section>
       <section className="rounded-lg border bg-background/80 p-4">
         <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
           <MapPinned className="h-4 w-4 text-accent" />
-          Where it left off
+          Current State
         </div>
         <p className="text-sm leading-6 text-muted-foreground">{thread.last_point}</p>
       </section>
       <section className="rounded-lg border bg-background/80 p-4">
         <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
           <CheckCircle2 className="h-4 w-4 text-primary" />
-          Key decisions
+          Settled Decisions
         </div>
         <ul className="space-y-2 text-sm leading-6 text-muted-foreground">
           {thread.key_decisions.map((decision) => (
@@ -50,14 +50,14 @@ export const ThreadCard = ({ thread }: { thread: Thread }) => (
       <section className="rounded-lg border bg-background/80 p-4">
         <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
           <ArrowRight className="h-4 w-4 text-accent" />
-          Suggested next step
+          Next Milestone
         </div>
         <p className="text-sm leading-6 text-muted-foreground">{thread.next_step}</p>
       </section>
       <section className="rounded-lg border bg-background/80 p-4 lg:col-span-2">
         <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
           <Tags className="h-4 w-4 text-primary" />
-          Context summary
+          Flow Context
         </div>
         <p className="text-sm leading-6 text-muted-foreground">{thread.context}</p>
       </section>

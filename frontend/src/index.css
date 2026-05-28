@@ -109,8 +109,22 @@ select {
 
 .workspace-shell {
   background:
-    linear-gradient(180deg, color-mix(in oklab, var(--card) 46%, var(--background)) 0, var(--background) 260px),
+    radial-gradient(circle at 8% 0%, color-mix(in oklab, var(--primary) 12%, transparent) 0, transparent 28rem),
+    linear-gradient(180deg, color-mix(in oklab, var(--card) 52%, var(--background)) 0, var(--background) 260px),
     var(--background);
+}
+
+.surface-grid {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--border) 46%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--border) 46%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.glass-panel {
+  border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
+  background: color-mix(in oklab, var(--card) 82%, transparent);
+  backdrop-filter: blur(18px);
 }
 
 .lift {

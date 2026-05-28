@@ -14,20 +14,20 @@ import type { InputMethod, ManualThreadInput } from '@/lib/types'
 
 const methodCopy: Record<InputMethod, { title: string; description: string }> = {
   share_link: {
-    title: 'Import from share link',
-    description: 'Paste a public ChatGPT or Claude share link and turn it into a clean handoff.',
+    title: 'Capture from share link',
+    description: 'Use a public ChatGPT or Claude share link to create a clean Flow bridge.',
   },
   file_upload: {
-    title: 'Upload chat export',
-    description: 'Use a .txt transcript or .json chat export.',
+    title: 'Capture from export',
+    description: 'Upload a .txt transcript or .json export from prior AI work.',
   },
   raw_text: {
-    title: 'Paste raw conversation',
-    description: 'Messy speaker turns are fine.',
+    title: 'Capture from raw text',
+    description: 'Paste messy speaker turns and let AIFlow structure the state.',
   },
   manual_description: {
-    title: 'Describe the state manually',
-    description: 'Best when the original transcript is not available.',
+    title: 'Describe the Flow manually',
+    description: 'Best when the transcript is unavailable but the project state is clear.',
   },
 }
 
@@ -59,13 +59,13 @@ export const NewThreadPage = () => {
     setLoading(true)
     try {
       const response = await threadApi.create(token, buildPayload())
-      toast.success('Thread analyzed')
+      toast.success('Flow mapped')
       navigate(`/app/threads/${response.thread.id}`)
     } catch (error) {
       toast.error({
-        title: 'Thread creation failed',
-        message: error instanceof Error ? error.message : 'Something stopped the handoff from being created.',
-        recovery: 'Retry once. If it repeats, check the Railway deploy logs for the matching create-thread request.',
+        title: 'Flow creation failed',
+        message: error instanceof Error ? error.message : 'Something stopped the Flow from being created.',
+        recovery: 'Retry once. If it repeats, check the Railway deploy logs for the matching capture request.',
       })
     } finally {
       setLoading(false)
@@ -75,8 +75,8 @@ export const NewThreadPage = () => {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold">New Thread</h1>
-        <p className="mt-2 text-muted-foreground">Bring in a conversation and generate model-ready thread handoffs.</p>
+        <h1 className="text-3xl font-semibold">Capture Context</h1>
+        <p className="mt-2 text-muted-foreground">Bring in an AI conversation and generate model-ready Flow bridges.</p>
       </div>
 
       <Card>
@@ -94,11 +94,11 @@ export const NewThreadPage = () => {
                 </TabsTrigger>
                 <TabsTrigger value="file_upload">
                   <FileUp className="h-4 w-4" />
-                  File upload
+                  Export file
                 </TabsTrigger>
                 <TabsTrigger value="raw_text">
                   <TextCursorInput className="h-4 w-4" />
-                  Raw text
+                  Raw context
                 </TabsTrigger>
                 <TabsTrigger value="manual_description">
                   <PenLine className="h-4 w-4" />
@@ -107,7 +107,7 @@ export const NewThreadPage = () => {
               </TabsList>
 
               <TabsContent value="share_link" className="space-y-2">
-                <Label htmlFor="share-link">Share URL</Label>
+                <Label htmlFor="share-link">Source URL</Label>
                 <Input
                   id="share-link"
                   placeholder="https://chatgpt.com/share/..."
@@ -118,7 +118,7 @@ export const NewThreadPage = () => {
               </TabsContent>
 
               <TabsContent value="file_upload" className="space-y-2">
-                <Label htmlFor="file">Chat export</Label>
+                <Label htmlFor="file">Context export</Label>
                 <Input
                   id="file"
                   type="file"
@@ -129,7 +129,7 @@ export const NewThreadPage = () => {
               </TabsContent>
 
               <TabsContent value="raw_text" className="space-y-2">
-                <Label htmlFor="raw-text">Conversation text</Label>
+                <Label htmlFor="raw-text">Conversation context</Label>
                 <Textarea
                   id="raw-text"
                   placeholder="User: ...&#10;Assistant: ..."
@@ -142,7 +142,7 @@ export const NewThreadPage = () => {
 
               <TabsContent value="manual_description" className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="working-on">What were you working on?</Label>
+                  <Label htmlFor="working-on">Current objective</Label>
                   <Textarea
                     id="working-on"
                     value={manual.working_on}
@@ -151,7 +151,7 @@ export const NewThreadPage = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="decisions">What decisions were made?</Label>
+                  <Label htmlFor="decisions">Settled decisions</Label>
                   <Textarea
                     id="decisions"
                     value={manual.decisions_made}
@@ -160,7 +160,7 @@ export const NewThreadPage = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="last-message">What was the last message/question?</Label>
+                  <Label htmlFor="last-message">Current state</Label>
                   <Textarea
                     id="last-message"
                     value={manual.last_message}
@@ -169,7 +169,7 @@ export const NewThreadPage = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="continue-goal">What do you want to continue?</Label>
+                  <Label htmlFor="continue-goal">Next milestone</Label>
                   <Textarea
                     id="continue-goal"
                     value={manual.continue_goal}
@@ -182,12 +182,12 @@ export const NewThreadPage = () => {
 
             <div className="mt-6 flex flex-col gap-3 rounded-lg border bg-muted/40 p-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <div className="font-medium">Create an AI flow</div>
-                <p className="mt-1 text-sm text-muted-foreground">Continue this conversation on another AI platform without losing context.</p>
+                <div className="font-medium">Create an AI Flow</div>
+                <p className="mt-1 text-sm text-muted-foreground">Turn this context into a portable handoff for another AI platform.</p>
               </div>
               <Button type="submit" size="lg" disabled={loading}>
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <WandSparkles className="h-4 w-4" />}
-                Create thread
+                Map Flow
               </Button>
             </div>
           </form>

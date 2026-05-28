@@ -6,11 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { GeneratedPrompt, Thread } from '@/lib/types'
 
 const modelNotes: Record<GeneratedPrompt['model_name'], string> = {
-  ChatGPT: 'Structured, task-forward handoff for broad reasoning.',
-  Claude: 'Context-rich, careful framing for nuanced continuation.',
-  Gemini: 'Synthesis-first continuation with explicit assumptions.',
-  DeepSeek: 'Direct execution mode for technical problem solving.',
-  Grok: 'Concise, candid continuation with assumption checks.',
+  ChatGPT: 'Structured bridge for broad reasoning and fast task continuation.',
+  Claude: 'Context-rich bridge for careful analysis and nuanced writing.',
+  Gemini: 'Synthesis-first bridge with explicit assumptions and next moves.',
+  DeepSeek: 'Execution-focused bridge for technical problem solving.',
+  Grok: 'Concise bridge with direct framing and assumption checks.',
 }
 
 export const PromptTabs = ({
@@ -28,41 +28,47 @@ export const PromptTabs = ({
 
   const copyThread = async (prompt: GeneratedPrompt) => {
     const text = [
-      `AIFlow handoff for ${prompt.model_name}`,
+      `AIFlow bridge for ${prompt.model_name}`,
       '',
       `Title: ${thread.title}`,
-      `Goal: ${thread.goal}`,
+      `Current Objective: ${thread.goal}`,
       '',
-      'Context:',
+      'Flow Context:',
       thread.context,
       '',
-      'Key decisions:',
+      'Settled Decisions:',
       ...(thread.key_decisions.length ? thread.key_decisions.map((decision) => `- ${decision}`) : ['- No explicit decisions were detected.']),
       '',
-      `Last point reached: ${thread.last_point}`,
-      `Suggested next step: ${thread.next_step}`,
+      `Current State: ${thread.last_point}`,
+      `Next Milestone: ${thread.next_step}`,
       '',
       thread.tags.length ? `Tags: ${thread.tags.join(', ')}` : 'Tags: none',
       '',
-      `${prompt.model_name} continuation brief:`,
+      `${prompt.model_name} Model Handoff:`,
       prompt.prompt_text,
     ].join('\n')
 
     await navigator.clipboard.writeText(text)
-    toast.success(`${prompt.model_name} thread copied`)
+    toast.success(`${prompt.model_name} handoff copied`)
   }
 
   return (
     <Card>
       <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <CardTitle>Continue this thread</CardTitle>
-          <p className="mt-1 text-sm text-muted-foreground">Choose a model and copy the complete handoff, including the thread brief.</p>
+          <CardTitle>Model Handoffs</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">Choose a destination model and copy the complete Flow bridge.</p>
         </div>
         {onRegenerate ? (
-          <Button variant="outline" onClick={onRegenerate} disabled={regenerating}>
+          <Button
+            variant="outline"
+            onClick={onRegenerate}
+            disabled={regenerating}
+            title="Refine Flow Configuration"
+            aria-label="Refine Flow Configuration"
+          >
             <WandSparkles className={regenerating ? 'h-4 w-4 animate-spin' : 'h-4 w-4'} />
-            Rebuild handoffs
+            Refine Flow
           </Button>
         ) : null}
       </CardHeader>
@@ -79,9 +85,13 @@ export const PromptTabs = ({
             <TabsContent key={prompt.model_name} value={prompt.model_name}>
               <div className="mb-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <p className="text-sm text-muted-foreground">{modelNotes[prompt.model_name]}</p>
-                <Button onClick={() => copyThread(prompt)}>
+                <Button
+                  onClick={() => copyThread(prompt)}
+                  title={`Copy ${prompt.model_name} Model Handoff`}
+                  aria-label={`Copy ${prompt.model_name} Model Handoff`}
+                >
                   <Clipboard className="h-4 w-4" />
-                  Copy thread
+                  Copy Handoff
                 </Button>
               </div>
               <pre className="max-h-[440px] overflow-auto rounded-lg border bg-background p-4 text-sm leading-6 whitespace-pre-wrap text-foreground">
