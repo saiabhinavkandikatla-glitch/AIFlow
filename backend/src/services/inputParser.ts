@@ -20,6 +20,8 @@ const MAX_SHARE_RESPONSE_BYTES = 2_000_000;
 const MIN_SHARE_CONVERSATION_CHARS = 40;
 const SHARE_FETCH_TIMEOUT_MS = 10_000;
 const MAX_EXTRACTED_TEXT_LEAVES = 80;
+const SHARE_FETCH_USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125 Safari/537.36";
 const LIKELY_TEXT_KEYS = new Set([
   "answer",
   "body",
@@ -163,7 +165,7 @@ const maybeMessageFromObject = (value: Record<string, unknown>) => {
     return maybeMessageFromObject(value.message);
   }
 
-  const role = value.role ?? value.speaker ?? value.author ?? value.from;
+  const role = value.role ?? value.sender ?? value.speaker ?? value.author ?? value.from;
   const content =
     value.content ?? value.text ?? (typeof value.message === "string" ? value.message : undefined) ?? value.body;
   if (!content) return null;
@@ -208,7 +210,7 @@ const extractMessagesFromJson = (value: unknown, seen = new WeakSet<object>()): 
   const chatGptMessages = extractChatGptMapping(record);
   if (chatGptMessages.length > 0) return chatGptMessages;
 
-  for (const key of ["messages", "conversation", "chat", "items", "turns", "linear_conversation"]) {
+  for (const key of ["messages", "chat_messages", "conversation", "chat", "items", "turns", "linear_conversation"]) {
     if (Array.isArray(record[key])) {
       const messages = extractMessagesFromJson(record[key], seen);
       if (messages.length > 0) return messages;
@@ -655,6 +657,68 @@ const providerLabelFromUrl = (url: URL) => {
   return host;
 };
 
+const readClaudeShareId = (url: URL) => {
+  const host = url.hostname.replace(/^www\./, "").toLowerCase();
+  if (host !== "claude.ai" && host !== "claude.com") return null;
+
+  const [, section, id] = url.pathname.split("/");
+  if (section !== "share" || !id || !/^[0-9a-f-]{32,40}$/i.test(id)) return null;
+
+  return id;
+};
+
+const fetchClaudeShareSnapshot = async (url: URL) => {
+  const shareId = readClaudeShareId(url);
+  if (!shareId) return "";
+
+  const endpoint = `https://${url.hostname}/api/chat_snapshots/${encodeURIComponent(shareId)}`;
+  let response: Response;
+
+  try {
+    await fetch(url, {
+      headers: {
+        "user-agent": SHARE_FETCH_USER_AGENT,
+        accept: "text/html,application/xhtml+xml,application/json,text/plain"
+      },
+      signal: AbortSignal.timeout(SHARE_FETCH_TIMEOUT_MS)
+    }).catch(() => undefined);
+
+    response = await fetch(endpoint, {
+      headers: {
+        "user-agent": SHARE_FETCH_USER_AGENT,
+        accept: "application/json,text/plain,*/*",
+        "anthropic-client-platform": "web",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "x-requested-with": "XMLHttpRequest",
+        referer: url.toString()
+      },
+      signal: AbortSignal.timeout(SHARE_FETCH_TIMEOUT_MS)
+    });
+  } catch {
+    return "";
+  }
+
+  if (!response.ok || !response.headers.get("content-type")?.toLowerCase().includes("json")) {
+    return "";
+  }
+
+  const body = await readLimitedResponseText(response);
+  const parsed = parseJsonCandidate(body);
+  const extracted = parsed ? extractConversationTextFromJson(parsed) : "";
+
+  if (!extracted) return "";
+
+  return compactWhitespace(`
+Claude Share Snapshot
+
+Source URL: ${url.toString()}
+
+${extracted}
+`);
+};
+
 const buildShareLinkFallback = ({
   sourceUrl,
   finalUrl,
@@ -691,7 +755,7 @@ const fetchPublicShareUrl = async (url: URL, redirectCount = 0): Promise<Respons
     response = await fetch(url, {
       redirect: "manual",
       headers: {
-        "user-agent": "AIFlow/1.0 (+https://aiflow.app)",
+        "user-agent": SHARE_FETCH_USER_AGENT,
         accept: "text/html,application/xhtml+xml,application/json,text/plain"
       },
       signal: AbortSignal.timeout(SHARE_FETCH_TIMEOUT_MS)
@@ -768,6 +832,11 @@ export const fetchShareLinkConversation = async (shareUrl: string) => {
     url = new URL(shareUrl);
   } catch {
     throw new AppError(400, "Enter a valid public AI conversation URL.");
+  }
+
+  const providerSnapshot = await fetchClaudeShareSnapshot(url);
+  if (providerSnapshot) {
+    return assertConversationLength(truncate(providerSnapshot, MAX_CONVERSATION_CHARS));
   }
 
   const response = await fetchPublicShareUrl(url);
