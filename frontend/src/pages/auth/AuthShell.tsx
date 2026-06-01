@@ -22,13 +22,13 @@ export const AuthShell = ({
         AI Flow
       </Link>
       <div className="max-w-xl">
-        <h1 className="text-5xl font-semibold leading-tight">The AI Workflow Operating System</h1>
+        <h1 className="text-5xl font-semibold leading-tight">Move AI conversations without losing context</h1>
         <p className="mt-5 text-lg leading-8 text-slate-300">
-          Build agents, automate workflows, and collaborate with AI tools in one intelligent workspace.
+          Capture a prior chat, let AIFlow map the important state, and continue the same work in another model.
         </p>
       </div>
       <div className="grid gap-3">
-        {['AI agents', 'Workflow canvas', 'Files and memory', 'Model routing', 'Execution history'].map((model) => (
+        {['Share links', 'Chat exports', 'Context mapping', 'Model handoffs', 'Saved Flows'].map((model) => (
           <div key={model} className="flex items-center justify-between rounded-md border border-white/10 bg-white/[0.04] px-4 py-3">
             <span className="text-sm">{model}</span>
             <span className="h-2 w-20 rounded bg-accent/70" />

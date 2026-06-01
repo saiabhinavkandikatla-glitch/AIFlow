@@ -60,7 +60,7 @@ export const LoginPage = () => {
   }
 
   return (
-    <AuthShell title="Sign in to AI Flow" subtitle="Open your AI workflow workspace and keep cross-model work moving.">
+    <AuthShell title="Sign in to AI Flow" subtitle="Open your saved Flows and keep cross-model work moving.">
       <form className="space-y-4" onSubmit={submit}>
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>

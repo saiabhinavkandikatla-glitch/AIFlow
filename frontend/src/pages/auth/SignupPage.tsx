@@ -85,7 +85,7 @@ export const SignupPage = () => {
   }
 
   return (
-    <AuthShell title="Create your AI Flow workspace" subtitle="Start with 5 free AI workflow runs this month.">
+    <AuthShell title="Create your AI Flow account" subtitle="Start with 5 free AI conversation Flows this month.">
       {verifyEmail ? (
         <div className="space-y-5 text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg bg-primary/10 text-primary">

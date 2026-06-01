@@ -6,17 +6,17 @@ import { cn } from '@/lib/utils'
 const onboardingSteps = [
   {
     icon: ScanText,
-    title: 'Create',
-    text: 'Start from a chat log, file export, shared link, manual brief, or blank AI workflow.',
+    title: 'Capture',
+    text: 'Start from a share link, file export, raw chat log, or short manual summary.',
   },
   {
     icon: GitBranch,
-    title: 'Automate',
-    text: 'AI Flow maps objectives, settled decisions, project state, next actions, and model-specific execution paths.',
+    title: 'Map',
+    text: 'AIFlow extracts the objective, settled decisions, project state, and next action.',
   },
   {
     icon: Braces,
-    title: 'Scale',
+    title: 'Handoff',
     text: 'Copy model handoffs, reuse the Flow, and move work across Claude, ChatGPT, DeepSeek, Gemini, and Grok.',
   },
 ]
@@ -27,11 +27,11 @@ export const FlowOnboardingEmptyState = ({ className }: { className?: string }) 
       <div className="flex flex-col justify-between gap-6">
         <div>
           <div className="mb-4 inline-flex rounded-md border bg-muted px-3 py-1 text-xs font-semibold uppercase text-muted-foreground">
-            Workspace setup
+            Flow setup
           </div>
-          <h2 className="text-2xl font-semibold tracking-tight">Start your first AI workflow</h2>
+          <h2 className="text-2xl font-semibold tracking-tight">Capture your first AI conversation</h2>
           <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">
-            Build a reusable operating layer for agents, files, context, and model handoffs instead of restarting work in every AI tab.
+            Turn a prior conversation into a reusable Flow with context, decisions, next steps, and model-specific handoff prompts.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
